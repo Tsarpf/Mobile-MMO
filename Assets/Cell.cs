@@ -6,9 +6,9 @@ using System.Collections.Generic;
 public class Cell : MonoBehaviour
 {
 
-	//static Material grid = Resources.Load("Materials/grid") as Material;
 	private GameObject go;
 	private Vector3 position;
+	private GameObject player;
 	//private List<Material> materials; 
 	private Material[] materials;
     public void Initialize(Material[] materials, Vector3 position)
@@ -20,6 +20,7 @@ public class Cell : MonoBehaviour
 
 		go.transform.position = this.position;
 		go.renderer.materials = this.materials;
+		go.collider.isTrigger = true;
 	}
     void Start()
 	{
@@ -29,6 +30,12 @@ public class Cell : MonoBehaviour
 	{
         
     }
+    void OnMouseDown()
+	{
+		//Debug.Logaöslkjfgdklrjtwqlörak§j
+		//Debug.Log(transform.position);
+		player.GetComponent<PlayerMove>().MoveTo(transform.position);
+	}
 	// Use this for initialization
 
 }
