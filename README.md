@@ -1,8 +1,10 @@
-RahatPois
+Project RahatPois
 =========
 
 In finland we call it rahasampo
 
+
+In short: 3D clone of a finnish well known chatting "game". But targeting mobile.
 
 
 Main features: 
