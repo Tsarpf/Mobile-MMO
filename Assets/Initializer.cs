@@ -11,7 +11,7 @@ public class Initializer : MonoBehaviour {
 	Floor floor;
 	// Use this for initialization
 	void Start () {
-		//SpaceDimensionX = 30; SpaceDimensionY = 20;
+		SpaceDimensionX = 30; SpaceDimensionY = 20;
 		
 
 		client = new Client ("http://datisbox.net:3001");
