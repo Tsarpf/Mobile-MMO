@@ -33,9 +33,9 @@ class Floor
             cells[x] = new GameObject[sizeY];  
             for (int y = 0; y < sizeY; y++)
             {
-                cells[x][y] = new GameObject();
+                cells[x][y] = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 cells[x][y].AddComponent<Cell>();
-                cells[x][y].GetComponent<Cell>().Initialize(mats, new Vector3(x, 0, y));
+                cells[x][y].GetComponent<Cell>().Initialize(mats, new Vector3(x, 0, y), cells[x][y]);
             }
         }
     }
