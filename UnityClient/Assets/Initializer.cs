@@ -14,10 +14,12 @@ public class Initializer : MonoBehaviour {
 		//SpaceDimensionX = 30; SpaceDimensionY = 20;
 		
 
-		client = new Client ("http://datisbox.net:3001");
+		client = new Client ("http://datisbox.net:3002");
 		client.Opened += SocketOpened;
+		client.Message += SocketMessage;
 
 		client.Connect ();
+		//client.Send("Derp");
 
         Material grid = Resources.Load("Materials/grid") as Material;
         Material floorMat = Resources.Load("Materials/grayfloor") as Material;
@@ -26,9 +28,17 @@ public class Initializer : MonoBehaviour {
 
 	}
 
-	void SocketOpened(object sender, EventArgs e)
+	private void SocketOpened(object sender, EventArgs e)
 	{
-		client.Send ("Derp");
+		Debug.Log("socket opened");
+        client.Emit("register", "fcuk you");
+		client.Send ("I was opened lul");
+	}
+    private void SocketMessage(object sender, MessageEventArgs e)
+	{
+		Debug.Log("socket message" + e);
+        client.Emit("register", "fcuk you");
+		client.Send ("messagin'");
 	}
 	
 	// Update is called once per frame
