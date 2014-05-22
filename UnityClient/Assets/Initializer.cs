@@ -1,48 +1,52 @@
 ﻿using UnityEngine;
 using System.Collections;
-using SocketIOClient; 
+using System.Collections.Generic;
 using System;
 
 public class Initializer : MonoBehaviour {
 
 	public int SpaceDimensionX;
 	public int SpaceDimensionY;
-	Client client;
 	Floor floor;
+	Dictionary<string, RunEvent> events;
 	// Use this for initialization
 	void Start () {
 		SpaceDimensionX = 30; SpaceDimensionY = 20;
 		
-
-		client = new Client ("http://datisbox.net:3002");
-		client.Opened += SocketOpened;
-		client.Message += SocketMessage;
-
-		client.Connect ();
-		//client.Send("Derp");
-
         Material grid = Resources.Load("Materials/grid") as Material;
         Material floorMat = Resources.Load("Materials/grayfloor") as Material;
 
 		floor = new Floor(floorMat, grid, SpaceDimensionX, SpaceDimensionY);
 
+
+        //Construct data handling stuff
+		events = new Dictionary<string, RunEvent>();
+		events["move"] = MoveEventHandler;
 	}
 
-	private void SocketOpened(object sender, EventArgs e)
+    public void MoveEventHandler(object data)
 	{
-		Debug.Log("socket opened");
-        client.Emit("register", "fcuk you");
-		client.Send ("I was opened lul");
+        //Do something with move data
 	}
-    private void SocketMessage(object sender, MessageEventArgs e)
-	{
-		Debug.Log("socket message" + e);
-        client.Emit("register", "fcuk you");
-		client.Send ("messagin'");
-	}
-	
+
 	// Update is called once per frame
-	void Update () {
-	
+	void Update ()
+	{
+        string json;
+        while((json = ReadQueue.Read()) != null)
+	    {
+			jokuHandleHomma(json);
+        }
+	}
+
+	public delegate void RunEvent(object someData);
+    void jokuHandleHomma(string json)
+	{
+        //Convert json to object n' stuff
+		object placeHolder = new object();
+		string eventType = "move"; //placeholder, should be determined from json
+
+		events[eventType](placeHolder);
+
 	}
 }

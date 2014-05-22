@@ -17,7 +17,7 @@ public class PlayerMove : MonoBehaviour {
 		position = transform.position;
 		target = position;
 
-		//Camera.main.orthographic = true;
+		Camera.main.orthographic = true;
 	}
 	
 	// Update is called once per frame
