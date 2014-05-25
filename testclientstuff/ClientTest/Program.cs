@@ -30,6 +30,13 @@ public class RegisterEvent : JSONEvent
 	//public static readonly string EventType = "Register";
 	public string Username;
 	public string Password; 
+	public string Email;
+}
+
+public class LoginEvent : JSONEvent
+{
+	public string Username;
+	public string Password;
 }
 public class SslTcpClient
 {
@@ -95,17 +102,27 @@ public class SslTcpClient
 
         ////byte[] message = Encoding.UTF8.GetBytes("Hello from the client.<EOF>");
         //byte[] message = Encoding.UTF8.GetBytes("register tsurba test1");
-        byte[] message = Encoding.UTF8.GetBytes("login tsurba test1");
-        // Send hello message to the server. 
-        sslStream.Write(message);
-        sslStream.Flush();
-        // Read message from the server. 
+		//byte[] message = Encoding.UTF8.GetBytes("login tsurba test1");
+		LoginEvent levent = new LoginEvent();
+		levent.Username = "tsurba";
+		levent.Password = "test1";
+		WriteJSONMessage(sslStream, levent);
+
+
+
         string serverMessage = ReadMessage(sslStream);
         Console.WriteLine("Server says: {0}", serverMessage);
-        // Close the client connection.
         client.Close();
         Console.WriteLine("Client closed.");
     }
+    static void WriteJSONMessage(SslStream sslStream, JSONEvent eventObj)
+	{
+		string message = JsonConvert.SerializeObject(eventObj);
+		Console.WriteLine(message);
+		byte[] msg = Encoding.UTF8.GetBytes(message);
+        sslStream.Write(msg);
+        sslStream.Flush();
+	}
     static string ReadMessage(SslStream sslStream)
     {
         // Read the  message sent by the server. 
@@ -140,14 +157,13 @@ public class SslTcpClient
         int port = 8666;
         string serverCertificateName = "tsarpf-cert.pem";
 
-		RegisterEvent revent = new RegisterEvent();
-        
-		revent.Username = "tsurba";
-		revent.Password = "test1";
-		string reg = JsonConvert.SerializeObject(revent);
-		Console.WriteLine("derp:\n" + reg);
+		//RegisterEvent revent = new RegisterEvent();
+		//revent.Username = "tsurba";
+		//revent.Password = "test1";
+		//string reg = JsonConvert.SerializeObject(revent);
+		//Console.WriteLine("derp:\n" + reg);
 
-        //SslTcpClient.RunClient(machineName, serverCertificateName, port);
+        SslTcpClient.RunClient(machineName, serverCertificateName, port);
 
         Console.ReadLine();
     }
