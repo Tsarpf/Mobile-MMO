@@ -24,6 +24,7 @@ var options = {
 
 
 var User = require('./models/user');
+var UserClass = require('./UserClass.js');
 
 passport.use(User.createStrategy());
 
@@ -32,72 +33,128 @@ passport.deserializeUser(User.deserializeUser());
 
 mongoose.connect('mongodb://localhost/test');
 
+
+
 var server = tls.createServer(options, function(cleartextStream) {
-    //cleartextStream.pipe(cleartextStream);
-    cleartextStream.write("sup", function()
-    {
-        console.log("sup written");
-    });
-  //  if(cleartextStream.authorized)
-  //  {
-  //      console.log("authorized");
-  //      cleartextStream.write("welcome!\n");
-  //      cleartextStream.setEncoding('utf8');
-  //  }
-  //  else if (cleartextStream.authorized == false)
-  //  {
-  //      console.log("unauthorized");
-  //      cleartextStream.write("welcome!\n");
-  //      //console.log(cleartextStream);
-  //      console.log(cleartextStream.authorizationError);
-  //  }
-  //  else
-  //  {
-  //      console.log("cleartextStream.authorized: " + cleartextSTream.authorized);
-  //  }
-    cleartextStream.on("data", function(data){
-        var dstring = data.toString();
-        if(dstring.indexOf("register") === 0)
-        {
-           var usern = dstring.split(' ')[1]; 
-           var passwd = dstring.split(' ')[2]; 
-           User.register(new User({username: usern}), passwd, function(err, user) {
-               console.log(err);
-               console.log("jebou");
-           });
-        }
-        else if(dstring.indexOf("login") === 0)
-        {
-            console.log("got to login");
-            var usern = dstring.split(' ')[1];
-            var passwd = dstring.split(' ')[2];
-            var bdy = {username: usern, password: passwd};
-            var req = {body: bdy};
-            var next = function (req, res, next)
+    var userSession;
+    //Log in
+    var loginHandler = function(eventData, sessionHandlers){ 
+        console.log("got to login");
+
+        var username = eventData["Username"];
+        var password = eventData["Password"];
+        var body = {username: username, password: password};
+        var req = {body: body};
+        var next = function (req, res, next){console.log("something called next or res?"); };
+        var res = next;
+        var derp = passport.authenticate('local', function(err, user, info){
+            if(!user)
             {
-                console.log("derpa herp");
-                console.log(req);
-                console.log(res);
-                console.log(next);
-            };
-            var res = next;
-            var derp = passport.authenticate('local', function(err, user, info){
                 console.log("failed?");
                 console.log(err);
                 console.log(info);
                 console.log("authenticated user: " + user);
-            })(req, res, next);
-            console.log("derp: " + derp);
+            }
+            else
+            {
+                console.log("success, user: " + user);
+                var props = {User: user};
+                userSession = UserClass(props);
+            }
+        })(req, res, next);
+    }
+    //Register
+    var registerHandler = function(eventData, sessionHandlers){
+        var username = eventData["Username"];
+        var password = eventData["Password"];
+        var email = eventData["Email"];
+        User.register(new User({username: usern}), passwd, function(err, user) {
+           console.log(err);
+           console.log("jebou");
+        });
+    }
+    //Initial list of handlers
+    var sessionHandlers = {
+        "Login": loginHandler,
+        "Register": registerHandler
+    }
+    cleartextStream.on("error", function(err) {
+        console.log("error");
+        console.log(err["code"]);
+        console.log(userSession);
+        //if(err[
+    });
+    cleartextStream.on("data", function(data){
+        try {
+            var receivedData = JSON.parse(data);
+        }
+        catch (e)
+        {
+            var error = "Error parsing sent data: " + e;
+            console.log(error);
+            cleartextStream.write(error);
+            return;
+        }
 
-            
+        var eventType = receivedData["EventType"];
+        if(eventType in sessionHandlers)
+        {
+            console.log("received data: " + receivedData);
+            sessionHandlers[eventType](receivedData, sessionHandlers);
         }
         else
         {
-            console.log("got data: " + data.toString())
+            console.log("Alert: tried to use an illegal eventhandler");
         }
-        //console.log("got data");
-        //console.log(data.toString());
-        //cleartextStream.write("welcome!\n");
+
+
+
+
+
+
+
+
+
+
+
+
+
+       // var dstring = data.toString();
+       // if(dstring.indexOf("register") === 0)
+       // {
+       // }
+       // else if(dstring.indexOf("login") === 0)
+       // {
+       //     console.log("got to login");
+       //     var usern = dstring.split(' ')[1];
+       //     var passwd = dstring.split(' ')[2];
+       //     var bdy = {username: usern, password: passwd};
+       //     var req = {body: bdy};
+       //     var next = function (req, res, next)
+       //     {
+       //         console.log("something called next?");
+       //     };
+       //     var res = next;
+       //     var derp = passport.authenticate('local', function(err, user, info){
+       //         if(!user)
+       //         {
+       //             console.log("failed?");
+       //             console.log(err);
+       //             console.log(info);
+       //             console.log("authenticated user: " + user);
+       //         }
+       //         else
+       //         {
+       //             var props = {User: user};
+       //             var userSession = UserClass(props);
+       //         }
+       //     })(req, res, next);
+       //     console.log("derp: " + derp);
+       // }
+       // else
+       // {
+       //     console.log("got data: " + data.toString())
+       // }
     });
     //cleartextStream.pipe(cleartextStream);
 });
