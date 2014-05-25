@@ -1,11 +1,11 @@
 var tls = require('tls'),
     fs = require('fs'),
-    path = require('path'),
-    passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy,
-    mongoose = require('mongoose');
-    userModel = require('./models/user');
-    userClass = require('./UserClass.js');
+   // path = require('path'),
+   // passport = require('passport'),
+   // LocalStrategy = require('passport-local').Strategy,
+   // mongoose = require('mongoose');
+   // userModel = require('./models/user');
+   // userClass = require('./UserClass.js');
 
 passport.use(userModel.createStrategy());
 
@@ -17,31 +17,59 @@ mongoose.connect('mongodb://localhost/test');
 
 var loggedInUsers = {};
 var areas = {}; //Todo implement loading from db
+var options = {
+    pfx: fs.readFileSync('tsarpf.pfx'),
+};
 var TLSServer = tls.createServer(options, clearTextServer);
 var clearTextServer = function(cleartextStream) {
     var currenUser = {};
-    var loginClosure = function(currentUser) {
-        var authHandlers = require('authHandlers.js');
-        return authHandlers["Login"];
-    }
-
-    var authClosure = {
-        "Register": function(currentUser){
-            return require('authHandlers.js')["Register"];
-        },
-        "Login": function(currentUser){
-            return require('authHandlers.js')["Login"];
-        }
-    }
     var serverHandlers = {
-        "Register": authClosure["Register"](currentUser),
-        "Login": authClosure["Login"](currentUser),
+        "Register": require('authHandlers.js')["Register"],
+        "Login": require('authHandlers.js')["Login"],
         "Something": other
     }
     cleartextStream.on("error", function(err){
         //something
     }
     cleartextStream.on("data", function(data) {
-        //jotain
+        var receivedData;
+        try {
+            receivedData = JSON.parse(data);
+        }
+        catch(e) {
+            var error = "Error parsing data: " + e;
+            console.log(error);
+            return;
+        }
+
+        var eventType = receivedData["EventType"];
+        if(eventType in serverHandlers)
+        {
+            //'tis a bit ugly workaround
+            var logInClosure = function(currentUser, users) {
+                return function(user) {
+                    currentUser = user;
+                    users[currentUser["username"]] = currentUser;
+                }
+            }
+            //save the closure thingy
+            receivedData["User"] = logInClosure(currentUser, loggedInUsers);
+
+            serverHandlers[eventType](receivedData, function(responseData){
+                if(responseData) {
+                    cleartextStream.write(responseData);
+                }
+            };
+        }
     }
 }
+
+TLSServer.listen(8666, function() {
+    console.log('listening');
+});
+
+/*
+var closureHelper = function(handler, data, eventData){
+    handler(eventData);
+}
+*/
