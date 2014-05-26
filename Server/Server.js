@@ -23,8 +23,8 @@ var options = {
 var clearTextServer = function(cleartextStream) {
     var currentUser = {};
     var serverHandlers = {
-        "Register": require('./authHandlers.js')["Register"],
-        "Login": require('./authHandlers.js')["Login"]
+        "register": require('./authHandlers.js')["register"],
+        "login": require('./authHandlers.js')["login"]
     }
     cleartextStream.on("error", function(err){
         //something
@@ -42,18 +42,14 @@ var clearTextServer = function(cleartextStream) {
         }
 
         console.log('received stuff: ' + receivedData);
-        var eventType = receivedData["EventType"];
+        var eventType = receivedData["eventType"];
         if(eventType in serverHandlers)
         {
-            //'tis a bit ugly workaround
-            var logInClosure = function(currentUser, users) {
-                return function(user) {
-                    currentUser = user;
-                    users[currentUser["username"]] = currentUser;
-                }
-            }
             //save the closure thingy
-            receivedData["User"] = logInClosure(currentUser, loggedInUsers);
+            var eventData = receivedData;
+            eventData.user = currentUser;
+            eventData.areas = areas;
+            eventData.users = loggedInUsers;
 
             serverHandlers[eventType](receivedData, function(responseData){
                 if(responseData) {
