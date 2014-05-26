@@ -13,8 +13,8 @@ passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
 
 var loginHandler = function(eventData, callback) {
-    var username = eventData["Username"];
-    var password = eventData["Password"];
+    var username = eventData["username"];
+    var password = eventData["password"];
 
     //Using passport.js which is usually used with express so we encapsulate the stuff into request body (a bit ugly)
     var req = {body: {username: username, password: password}};
@@ -29,7 +29,7 @@ var loginHandler = function(eventData, callback) {
         //Saves user to logged in users and update server session user info thingy
         var userClassed = userClass(user);
         eventData.user = userClassed;
-        eventData.users[userClassed.GetUsername()] = userClassed;
+        eventData.users[userClassed.getUsername()] = userClassed;
 
         var msg = resObject("login", "accepted");
         if(callback) {callback(msg);};

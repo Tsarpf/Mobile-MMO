@@ -17,11 +17,15 @@ var moveRequestHandler = function(eventData, callback) {
 
     //Todo: other checks? f.ex if two players are trying to move to the same empty cell, should handle in some way
     
-    
+    var route = area.getSetPlayerRoute(user, targetPos);
 
-    
+    var moveEvent = {};
 
+    moveEvent.user = user.getName();
+    moveEvent.from = startPos;
+    moveEvent.to = route;
 
-
-    
+    callback(moveEvent);    
 }
+
+module.exports = moveRequestHandler;

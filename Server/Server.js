@@ -24,7 +24,8 @@ var clearTextServer = function(cleartextStream) {
     var currentUser = {};
     var serverHandlers = {
         "register": require('./authHandlers.js')["register"],
-        "login": require('./authHandlers.js')["login"]
+        "login": require('./authHandlers.js')["login"],
+        "moverequest": require('./moveHandler.js')
     }
     cleartextStream.on("error", function(err){
         //something
@@ -42,7 +43,7 @@ var clearTextServer = function(cleartextStream) {
         }
 
         console.log('received stuff: ' + receivedData);
-        var eventType = receivedData["eventType"];
+        var eventType = receivedData["eventtype"];
         if(eventType in serverHandlers)
         {
             //save the closure thingy
@@ -51,11 +52,12 @@ var clearTextServer = function(cleartextStream) {
             eventData.areas = areas;
             eventData.users = loggedInUsers;
 
+            console.log("dispatching: " + eventType);
             serverHandlers[eventType](receivedData, function(responseData){
                 if(responseData) {
                     console.log('writing back to client:')
                     console.log(responseData);
-                    cleartextStream.write(responseData);
+                    cleartextStream.write(responseData, function() { console.log("written");});
                 }
             });
         }

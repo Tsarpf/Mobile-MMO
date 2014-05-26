@@ -5,7 +5,7 @@ var area = function() {
     var pub = {};
     var playerSpeed = 1;
     var emptyCells = [];
-    pub.GetSetPlayerRoute(player, targetPos)
+    pub.getSetPlayerRoute(player, targetPos)
     {
         var startPos = playerPositions[player.getName()];
         var route = mGetRoute(startPos, targetPos);         
