@@ -8,6 +8,7 @@ var path = require('path'),
 
 mongoose.connect('mongodb://localhost/test');
 
+passport.use(userModel.createStrategy());
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
 
