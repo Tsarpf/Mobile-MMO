@@ -12,6 +12,22 @@ passport.use(userModel.createStrategy());
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
 
+var replaceProperties = function(oldObject, newObject) {
+    for(var key in oldObject)
+    {
+        if(oldObject.hasOwnProperty(key)){
+            delete oldObject[key];
+        }
+    }
+
+    for(var key in newObject)
+    {
+        if(newObject.hasOwnProperty(key)) {
+            oldObject[key] = newObject[key];
+        }
+    }
+}
+
 var loginHandler = function(eventData, callback) {
     var username = eventData["username"];
     var password = eventData["password"];
@@ -28,8 +44,10 @@ var loginHandler = function(eventData, callback) {
 
         //Saves user to logged in users and update server session user info thingy
         var userClassed = userClass(user);
-        eventData.user = userClassed;
+        //eventData.user = userReference;
+        replaceProperties(eventData.user, userClassed);
         eventData.users[userClassed.getUsername()] = userClassed;
+        //replaceProperties(eventData.users[
 
         var msg = resObject("login", "accepted");
         if(callback) {callback(msg);};

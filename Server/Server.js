@@ -29,6 +29,8 @@ var clearTextServer = function(cleartextStream) {
     }
     cleartextStream.on("error", function(err){
         //something
+        console.log(currentUser.getName() + " errored:");
+        console.log(err);
     });
     cleartextStream.on("data", function(data) {
         console.log('data: ' + data);
@@ -55,6 +57,7 @@ var clearTextServer = function(cleartextStream) {
             console.log("dispatching: " + eventType);
             serverHandlers[eventType](receivedData, function(responseData){
                 if(responseData) {
+                    console.log(loggedInUsers);
                     console.log('writing back to client:')
                     console.log(responseData);
                     cleartextStream.write(responseData, function() { console.log("written");});

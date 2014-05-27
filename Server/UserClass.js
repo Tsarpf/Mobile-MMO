@@ -18,14 +18,21 @@ var user = function(userModel) {
     }
     pub.enterArea = function(area)
     {
-        mCurrentArea = area;
-        mCurrentPosition = area.getStartingPosition();
-        
+        if(area.playerCanJoin(this))
+        {
+            area.playerJoin(this);
+            mCurrentArea = area;
+        }
     }
     pub.getCurrentPosition = function()
     {
         //Todo: if moving, calculate approximate progress to destination and give that as the current position
-        return mCurrentArea.getPlayerPosition(mUser);
+        //return mCurrentArea.getPlayerPosition(mUser);
+        return mCurrentArea.getPlayerPosition(this);
+    }
+    pub.getCurrentArea = function()
+    {
+        return mCurrentArea;        
     }
     pub.getUsername = function()
     {
@@ -54,11 +61,14 @@ var user = function(userModel) {
     var mStreamErrorHandler = function(err)
     {
     }
-    var mSetUp = function()
+    var mConstruct = function()
     {
+        pub.enterArea(require("./area.js")());
+        console.log("joining default area");
+        console.log(pub.getCurrentPosition());
     }
 
-    mSetUp();
+    mConstruct();
     return pub;
 }
 

@@ -5,22 +5,44 @@ var area = function() {
     var pub = {};
     var playerSpeed = 1;
     var emptyCells = [];
-    pub.getSetPlayerRoute(player, targetPos)
+    var mStartingPosition;
+
+    pub.getSetPlayerRoute = function(player, targetPos)
     {
         var startPos = playerPositions[player.getName()];
         var route = mGetRoute(startPos, targetPos);         
 
         //TODO: set player on route
         console.log("ssetting player on route unfinished. please finish me");
+        playerPositions[player.getName()] = targetPos;
         return route;
     }
-    pub.isReachable(startPos, targetPos)
+    pub.isReachable = function(startPos, targetPos)
     {
         console.log("reachability stuff unfinished. please finish me");
         return true;
     }
-    pub.getPlayerPosition(user)
+    pub.getStartingPosition = function()
     {
+        return mStartingPosition;
+    }
+    pub.setStartingPosition = function(pos)
+    {
+        mStartingPosition = pos;
+    }
+    pub.playerCanJoin = function(player)
+    {
+        return true;
+    }
+    pub.playerJoin = function(player)
+    {
+        playerPositions[player.getName()] = mStartingPosition;
+    }
+    pub.getPlayerPosition = function(user)
+    {
+        console.log("hello from getplayerposition in area: ");
+        console.log(user);
+        console.log(playerPositions);
         if(user.getName() in movingPlayers)
         {
             //TODO: time stuff. stuff like start time won't be set here, but is here now for .. saving the thought?
@@ -60,6 +82,12 @@ var area = function() {
     {
         return Math.sqrt(Math.pow(vector.x,2) + Math.pow(vector.y,2));
     }
+    var mConstruct = function()
+    {
+        mStartingPosition = {x: 0, y: 0};
+    }
+    mConstruct();
+    return pub;
 }
 
 module.exports = area;
