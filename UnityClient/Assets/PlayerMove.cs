@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Newtonsoft.Json;
 
 public class PlayerMove : MonoBehaviour {
 
@@ -44,43 +45,69 @@ public class PlayerMove : MonoBehaviour {
 			//des.ortho
 			//Camera.main.orthographic = true;
 			Debug.Log ("mouse down");
+ 
 
-			if (Physics.Raycast (ray, out hit)) {
+            if (Physics.Raycast(ray, out hit))
+            {
 
-				//hit.collider.gameObject
-				//Debug.Log ("ses: " + hit.collider.gameObject.name);
+                //hit.collider.gameObject
+                //Debug.Log ("ses: " + hit.collider.gameObject.name);
 
-				Cell hitObject = hit.collider.gameObject.GetComponent<Cell>();
-				if(!hitObject.IsEmpty())
-					return;
+                Cell hitObject = hit.collider.gameObject.GetComponent<Cell>();
+                if (hitObject == null)
+                    return;
+                if (!hitObject.IsEmpty())
+                    return;
 
-				Vector3 targetPos = hitObject.GetCoordinates();
+                Vector3 targetPos = hitObject.GetCoordinates();
 
-				//hit.transform.SendMessage("Selected");
+                //hit.transform.SendMessage("Selected");
 
-				if(V3Equal(position, targetPos))
-				{
-					return;
-				}
+                if (V3Equal(position, targetPos))
+                {
+                    return;
+                }
 
-				//if(target.x > 
-				target = targetPos;
-				//transform.rigidbody.velocity = new Vector3(-direction.x, 0, -direction.z);
-				//player.GetComponent<PlayerMove>().MoveTo(transform.position);
-			}
+                //if(target.x > 
+                target = targetPos;
+                //transform.rigidbody.velocity = new Vector3(-direction.x, 0, -direction.z);
+                //player.GetComponent<PlayerMove>().MoveTo(transform.position);
+                MoveRequestEvent request = new MoveRequestEvent();
+                request.to = new Vector2(target.x, target.z);
+                WriteQueue.Write(request);
+                Debug.Log("written: " + request);
+                //var test = WriteQueue.Read();
+                //Debug.Log("test " + test);
+                /*
+                var incomingData = ReadQueue.Read();
+                if (incomingData != null)
+                {
+                    Debug.Log(incomingData);
+                    JSONEvent readEvent = JsonConvert.DeserializeObject<JSONEvent>(incomingData);
+                    Debug.Log(readEvent);
+                }
+                */
+                moveTo(new Vector2(target.x, target.z)); //for testing
+            }
+            
 		}   
 
-		if (!V3Equal(target, position))
-		{
-			Vector3 direction = target - position;
-			direction = new Vector3(direction.normalized.x, 0, direction.normalized.z);
-			transform.rigidbody.velocity = direction * 3;
-		} else if (V3Equal (target, position)) {
-			//Debug.Log ("paikka");
-			transform.rigidbody.velocity = new Vector3(0,0,0);
-		}
+		
 
 	}
+
+    public void moveTo(Vector2 targetpos)
+    {
+        Vector3 tgt = new Vector3(targetpos.x, 0, targetpos.y);
+        if (!V3Equal(tgt, position))
+        {
+            Vector3 direction = tgt - position;
+            direction = new Vector3(direction.normalized.x, 0, direction.normalized.z);
+            transform.rigidbody.velocity = direction * 3;
+        }
+
+    }
+
 
 	bool V3Equal(Vector3 a, Vector3 b){
 		a = new Vector3 (a.x, 0, a.z);
