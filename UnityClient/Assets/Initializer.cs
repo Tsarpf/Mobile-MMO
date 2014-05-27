@@ -8,7 +8,7 @@ public class Initializer : MonoBehaviour {
 	public int SpaceDimensionX;
 	public int SpaceDimensionY;
 	Floor floor;
-	Dictionary<string, RunEvent> events;
+    //Dictionary<string, RunEvent> events;
 	// Use this for initialization
 	void Start () {
 		SpaceDimensionX = 30; SpaceDimensionY = 20;
@@ -20,8 +20,8 @@ public class Initializer : MonoBehaviour {
 
 
         //Construct data handling stuff
-		events = new Dictionary<string, RunEvent>();
-		events["move"] = MoveEventHandler;
+        //events = new Dictionary<string, RunEvent>();
+        //events["move"] = MoveEventHandler;
 	}
 
     public void MoveEventHandler(object data)
@@ -32,13 +32,15 @@ public class Initializer : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-        string json;
+        /*
+        JSONEvent json;
         while((json = ReadQueue.Read()) != null)
 	    {
-			jokuHandleHomma(json);
+			//jokuHandleHomma(json);
         }
+        */
 	}
-
+    /*
 	public delegate void RunEvent(object someData);
     void jokuHandleHomma(string json)
 	{
@@ -49,4 +51,5 @@ public class Initializer : MonoBehaviour {
 		events[eventType](placeHolder);
 
 	}
+    */
 }

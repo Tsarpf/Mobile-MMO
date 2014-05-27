@@ -6,16 +6,16 @@ using System.Collections;
 
 public static class ReadQueue
 {
-   public static Queue<string> queue = new Queue<string>(); 
-   
-   public static void Write(string json)
+    private static Queue<string> queue = new Queue<string>();
+
+    public static void Write(string json)
    {
        lock (queue)
        {
            queue.Enqueue(json);
        }
    }
-   public static string Read()
+    public static string Read()
    {
        lock (queue)
        {
@@ -31,25 +31,25 @@ public static class ReadQueue
 
 public static class WriteQueue 
 {
-   public static Queue<string> queue = new Queue<string>(); 
-   
-   public static void Write(string json)
-   {
-       lock (queue)
-       {
-           queue.Enqueue(json);
-       }
-   }
-   public static string Read()
-   {
-       lock (queue)
-       {
-           if (queue.Count > 0)
-           {
-               return queue.Dequeue();
-           }
+    private static Queue<JSONEvent> queue = new Queue<JSONEvent>();
 
-           return null;
-       }
-   }
+    public static void Write(JSONEvent json)
+    {
+        lock (queue)
+        {
+            queue.Enqueue(json);
+        }
+    }
+    public static JSONEvent Read()
+    {
+        lock (queue)
+        {
+            if (queue.Count > 0)
+            {
+                return queue.Dequeue();
+            }
+
+            return null;
+        }
+    }
 }
