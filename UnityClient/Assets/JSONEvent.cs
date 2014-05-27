@@ -33,12 +33,29 @@ public class LoginEvent : JSONEvent
 
 public class MoveRequestEvent : JSONEvent
 {
-    public Vector2 to;
+	public Vector2JSON to;
 }
 
 public class MoveEvent : JSONEvent
 {
     public string username;
-    public Vector2 from;
-    public Vector2 to;
+	public Vector2JSON from;
+	public Vector2JSON to;
+}
+
+
+public class Vector2JSON
+{
+	public float x;
+	public float y;
+    public Vector2JSON(Vector2 vector)
+	{
+		x = vector.x;
+		y = vector.y;
+	}
+    public Vector2JSON(float x, float y)
+	{
+		this.x = x;
+		this.y = y;
+	}
 }
