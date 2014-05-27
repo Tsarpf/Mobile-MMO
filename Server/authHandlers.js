@@ -8,28 +8,30 @@ var path = require('path'),
 
 mongoose.connect('mongodb://localhost/test');
 
+passport.use(userModel.createStrategy());
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
 
 var loginHandler = function(eventData, callback) {
-    var username = eventData["Username"];
-    var password = eventData["Password"];
+    var username = eventData["username"];
+    var password = eventData["password"];
 
     //Using passport.js which is usually used with express so we encapsulate the stuff into request body (a bit ugly)
     var req = {body: {username: username, password: password}};
     passport.authenticate('local', function(err, user, info) {
         if(!user) {
             console.log("login failed");
-            var msg = resObject("Login", "Rejected");
+            var msg = resObject("login", "rejected");
             callback(msg);
             return;
         }
 
         //Saves user to logged in users and update server session user info thingy
         var userClassed = userClass(user);
-        eventData["User"](userClassed);
+        eventData.user = userClassed;
+        eventData.users[userClassed.getUsername()] = userClassed;
 
-        var msg = resObject("Login", "Accepted");
+        var msg = resObject("login", "accepted");
         if(callback) {callback(msg);};
         
     })(req, null, null);
@@ -37,24 +39,24 @@ var loginHandler = function(eventData, callback) {
 
 var registerHandler = function(eventData, callback) {
 
-    var username = eventData["Username"];
-    var password = eventData["Password"];
-    var email = eventData["Email"];
+    var username = eventData["username"];
+    var password = eventData["password"];
+    var email = eventData["email"];
     userModel.register(new userModel({username: username}), password, email, function(err, user) {
         if(err){
             console.log("Error in registration: " + err);
-            var msg = resObject("Register", "Rejected"); 
+            var msg = resObject("register", "rejected"); 
             callback(msg);
             return;
         }
         console.log(username + " registered succesfully");
-        var msg = resObject("Register", "Accepted");
+        var msg = resObject("register", "accepted");
         if(callback) {callback(msg);};
     });
 }
 
 
 module.exports = {
-    Login: loginHandler,
-    Register: registerHandler
+    login: loginHandler,
+    register: registerHandler
 }

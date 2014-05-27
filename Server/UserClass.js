@@ -1,19 +1,43 @@
 
 
-var user = function(cleartextStream) {
-    var mStream = cleartextStream;
-    var mSessionHandlers = {};
-    //var mUser = properties["User"]; 
+var user = function(userModel) {
+    var mUser = userModel;
+    var mName = mUser.username;
+    var mCurrentArea = null;
+    var mMoving = false;
     var pub = {};
-    pub.GetHandlers = function()
+    pub.getHandlers = function()
     {
         var list = [];
         list.push();
         return list;
     }
-    pub.Teardown = function()
+    pub.teardown = function()
     {
         mTeardown();
+    }
+    pub.enterArea = function(area)
+    {
+        mCurrentArea = area;
+        mCurrentPosition = area.getStartingPosition();
+        
+    }
+    pub.getCurrentPosition = function()
+    {
+        //Todo: if moving, calculate approximate progress to destination and give that as the current position
+        return mCurrentArea.getPlayerPosition(mUser);
+    }
+    pub.getUsername = function()
+    {
+        return mName;
+    }
+    pub.getName = function()
+    {
+        return mName;
+    }
+    pub.getCurrentArea = function()
+    {
+        return mCurrentArea;
     }
 
     var mTeardown = function()
@@ -29,20 +53,13 @@ var user = function(cleartextStream) {
     }
     var mStreamErrorHandler = function(err)
     {
-        console.log("error: " + err["code"]);
-        mTeardown();
     }
     var mSetUp = function()
     {
-        mSessionHandlers = {
-            "Login": mLoginHandler,
-            "Register": mRegisterHandler
-        }
-        mStream.on("error", mStreamErrorHandler);
     }
 
     mSetUp();
     return pub;
 }
 
-module.exports = user 
+module.exports = user;
