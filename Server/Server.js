@@ -1,5 +1,6 @@
 var tls = require('tls'),
-    fs = require('fs');
+    fs = require('fs'),
+    resObject = require('./genericResponseObject.js');
    // path = require('path'),
    // passport = require('passport'),
    // LocalStrategy = require('passport-local').Strategy,
@@ -17,15 +18,18 @@ var tls = require('tls'),
 
 var loggedInUsers = {};
 var areas = {}; //Todo implement loading from db
+areas["test"] = require('./area.js');
 var options = {
     pfx: fs.readFileSync('tsarpf.pfx'),
 };
 var clearTextServer = function(cleartextStream) {
+    //cleartextStream.write("Hello");
     var currentUser = {};
     var serverHandlers = {
-        "register": require('./authHandlers.js')["register"],
-        "login": require('./authHandlers.js')["login"],
-        "moverequest": require('./moveHandler.js')
+        "registerRequest": require('./authHandlers.js')["register"],
+        "loginRequest": require('./authHandlers.js')["login"],
+        "moveRequest": require('./moveHandler.js'),
+        "joinAreaRequest": require('./joinAreaHandler.js')
     }
     cleartextStream.on("error", function(err){
         //something
@@ -54,26 +58,41 @@ var clearTextServer = function(cleartextStream) {
             eventData.areas = areas;
             eventData.users = loggedInUsers;
 
-            console.log("dispatching: " + eventType);
-            serverHandlers[eventType](receivedData, function(responseData){
-                if(responseData) {
-                    console.log(loggedInUsers);
-                    console.log('writing back to client:')
-                    console.log(responseData);
-                    cleartextStream.write(responseData, function() { console.log("written");});
-                }
-            });
+            console.log("dispatching on next tick: " + eventType);
+            //process.nextTick = function(callback) {
+            //      if (typeof callback !== 'function') {
+            //              console.trace(typeof callback + ' is not a function');
+            //                }
+            //                  return nextTick(callback);
+            //};
+            //process.nextTick(
+                serverHandlers[eventType](receivedData, function(responseData){
+                    if(responseData) {
+                        console.log(loggedInUsers);
+                        console.log('writing back to client:')
+                        console.log(responseData);
+                        send(responseData);
+                    }
+                })
+            //);
+        }
+        else
+        {
+            send(resObject("info", "No such event"));
         }
     });
+    var send = function(data, callback)
+    {
+        var r = JSON.stringify(data);
+        //cleartextStream.write(r + "<EOF>", function() {
+        cleartextStream.write(r, function() {
+            console.log("written");
+            if(callback) {callback();};
+        });
+    }
 }
 var TLSServer = tls.createServer(options, clearTextServer);
 
 TLSServer.listen(8666, function() {
     console.log('listening');
 });
-
-/*
-var closureHelper = function(handler, data, eventData){
-    handler(eventData);
-}
-*/

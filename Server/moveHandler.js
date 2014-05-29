@@ -1,3 +1,4 @@
+var resObject = require('./genericResponseObject.js');
 var moveRequestHandler = function(eventData, callback) {
     var user = eventData.user;
     var area = user.getCurrentArea();

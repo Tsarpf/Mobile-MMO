@@ -1,20 +1,23 @@
 var area = function() {
     //var playersInArea = {};
-    var playerPositions = {};
+    var players = {};
     var movingPlayers = {};
     var pub = {};
     var playerSpeed = 1;
-    var emptyCells = [];
-    var mStartingPosition;
+    var inaccessableCells = [];
+    var mPassword = null;
+
+    var mStartingPosition = {x: 0, y: 0};
+    var mDimensions = {x: 30, y: 20};
 
     pub.getSetPlayerRoute = function(player, targetPos)
     {
-        var startPos = playerPositions[player.getName()];
+        var startPos = players[player.getName()].position;
         var route = mGetRoute(startPos, targetPos);         
 
         //TODO: set player on route
         console.log("ssetting player on route unfinished. please finish me");
-        playerPositions[player.getName()] = targetPos;
+        players[player.getName()].position = targetPos;
         return route;
     }
     pub.isReachable = function(startPos, targetPos)
@@ -30,19 +33,61 @@ var area = function() {
     {
         mStartingPosition = pos;
     }
-    pub.playerCanJoin = function(player)
+    pub.isPasswordProtected = function()
+    {
+        return false;
+    }
+    pub.getDescriptionObject = function()
+    {
+        var robject = {};
+        robject.startingPosition = mStartingPosition;
+        robject.dimensions = mDimensions;
+        var playersData = [];
+        for(var playerName in players)
+        {
+            if(playerName in movingPlayers)
+            {
+                //handle in some different way
+            }
+            else
+            {
+                var playerData = players[playerName].getDescriptionObject();
+                playersData.push(playerData);
+            }
+        }
+
+        robject.playersData = playersData;
+        
+        return robject;
+    }
+    var mPlayerCanJoin = function(player)
     {
         return true;
     }
-    pub.playerJoin = function(player)
+    pub.join = function(player, password)
     {
-        playerPositions[player.getName()] = mStartingPosition;
+        //placeholder. ugly. any better ideas?
+        var cannotJoinForSomeReason = !mPlayerCanJoin(player);
+        if(cannotJoinForSomeReason) return "reason is:";
+
+        if(!mPassword)
+        {
+            password = null;
+        }
+
+        if(password !== mPassword)
+        {
+            return "invalid password";
+        }
+
+        player.setCurrentArea(this);
+        players[player.getName()] = {
+            position: mStartingPosition,
+            instance: player
+        };
     }
     pub.getPlayerPosition = function(user)
     {
-        console.log("hello from getplayerposition in area: ");
-        console.log(user);
-        console.log(playerPositions);
         if(user.getName() in movingPlayers)
         {
             //TODO: time stuff. stuff like start time won't be set here, but is here now for .. saving the thought?
@@ -55,7 +100,7 @@ var area = function() {
         }
         else
         {
-            return playerPositions[user.getName()];
+            return players[user.getName()].position;
         }
     }
     var mGetRoute = function(startPos, targetPos)
@@ -84,7 +129,7 @@ var area = function() {
     }
     var mConstruct = function()
     {
-        mStartingPosition = {x: 0, y: 0};
+        
     }
     mConstruct();
     return pub;

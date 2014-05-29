@@ -5,28 +5,13 @@ var path = require('path'),
     userModel = require('./models/user');
     userClass = require('./UserClass.js');
     resObject = require('./genericResponseObject.js');
+    replaceProperties = require('./utils.js').replaceProperties;
 
 mongoose.connect('mongodb://localhost/test');
 
 passport.use(userModel.createStrategy());
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
-
-var replaceProperties = function(oldObject, newObject) {
-    for(var key in oldObject)
-    {
-        if(oldObject.hasOwnProperty(key)){
-            delete oldObject[key];
-        }
-    }
-
-    for(var key in newObject)
-    {
-        if(newObject.hasOwnProperty(key)) {
-            oldObject[key] = newObject[key];
-        }
-    }
-}
 
 var loginHandler = function(eventData, callback) {
     var username = eventData["username"];
@@ -36,8 +21,7 @@ var loginHandler = function(eventData, callback) {
     var req = {body: {username: username, password: password}};
     passport.authenticate('local', function(err, user, info) {
         if(!user) {
-            console.log("login failed");
-            var msg = resObject("login", "rejected");
+            var msg = resObject("loginEvent", "rejected");
             callback(msg);
             return;
         }
@@ -49,7 +33,7 @@ var loginHandler = function(eventData, callback) {
         eventData.users[userClassed.getUsername()] = userClassed;
         //replaceProperties(eventData.users[
 
-        var msg = resObject("login", "accepted");
+        var msg = resObject("loginEvent", "accepted");
         if(callback) {callback(msg);};
         
     })(req, null, null);
@@ -63,12 +47,12 @@ var registerHandler = function(eventData, callback) {
     userModel.register(new userModel({username: username}), password, email, function(err, user) {
         if(err){
             console.log("Error in registration: " + err);
-            var msg = resObject("register", "rejected"); 
+            var msg = resObject("registerEvent", "rejected"); 
             callback(msg);
             return;
         }
         console.log(username + " registered succesfully");
-        var msg = resObject("register", "accepted");
+        var msg = resObject("registerEvent", "accepted");
         if(callback) {callback(msg);};
     });
 }
