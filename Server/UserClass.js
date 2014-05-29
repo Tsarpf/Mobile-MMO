@@ -16,18 +16,16 @@ var user = function(userModel) {
     {
         mTeardown();
     }
-    pub.enterArea = function(area)
+    pub.setCurrentArea = function(area)
     {
-        if(area.playerCanJoin(this))
-        {
-            area.playerJoin(this);
-            mCurrentArea = area;
-        }
+        mCurrentArea = area;
+    }
+    pub.getCurrentArea = function()
+    {
+        return mCurrentArea;
     }
     pub.getCurrentPosition = function()
     {
-        //Todo: if moving, calculate approximate progress to destination and give that as the current position
-        //return mCurrentArea.getPlayerPosition(mUser);
         return mCurrentArea.getPlayerPosition(this);
     }
     pub.getCurrentArea = function()
@@ -42,9 +40,13 @@ var user = function(userModel) {
     {
         return mName;
     }
-    pub.getCurrentArea = function()
+    pub.getDescriptionObject = function()
     {
-        return mCurrentArea;
+        var robject = {};
+        robject.username = mName;
+        robject.position = pub.getCurrentPosition();
+        //add more when needed.
+        return robject;
     }
 
     var mTeardown = function()
@@ -52,20 +54,8 @@ var user = function(userModel) {
 
     }
     
-    var mLoginHandler = function()
-    {
-    }
-    var mRegisterHandler = function()
-    {
-    }
-    var mStreamErrorHandler = function(err)
-    {
-    }
     var mConstruct = function()
     {
-        pub.enterArea(require("./area.js")());
-        console.log("joining default area");
-        console.log(pub.getCurrentPosition());
     }
 
     mConstruct();
