@@ -1,6 +1,6 @@
 var tls = require('tls'),
     fs = require('fs'),
-    resObject = require('genericResponseObject.js');
+    resObject = require('./genericResponseObject.js');
    // path = require('path'),
    // passport = require('passport'),
    // LocalStrategy = require('passport-local').Strategy,
@@ -23,12 +23,13 @@ var options = {
     pfx: fs.readFileSync('tsarpf.pfx'),
 };
 var clearTextServer = function(cleartextStream) {
+    //cleartextStream.write("Hello");
     var currentUser = {};
     var serverHandlers = {
         "registerRequest": require('./authHandlers.js')["register"],
         "loginRequest": require('./authHandlers.js')["login"],
         "moveRequest": require('./moveHandler.js'),
-        "joinAreaRequest": require(./joinAreaHandler.js')
+        "joinAreaRequest": require('./joinAreaHandler.js')
     }
     cleartextStream.on("error", function(err){
         //something
@@ -58,7 +59,13 @@ var clearTextServer = function(cleartextStream) {
             eventData.users = loggedInUsers;
 
             console.log("dispatching on next tick: " + eventType);
-            process.nextTick(
+            //process.nextTick = function(callback) {
+            //      if (typeof callback !== 'function') {
+            //              console.trace(typeof callback + ' is not a function');
+            //                }
+            //                  return nextTick(callback);
+            //};
+            //process.nextTick(
                 serverHandlers[eventType](receivedData, function(responseData){
                     if(responseData) {
                         console.log(loggedInUsers);
@@ -66,8 +73,8 @@ var clearTextServer = function(cleartextStream) {
                         console.log(responseData);
                         send(responseData);
                     }
-                });
-            );
+                })
+            //);
         }
         else
         {
@@ -76,7 +83,9 @@ var clearTextServer = function(cleartextStream) {
     });
     var send = function(data, callback)
     {
-        cleartextStream.write(data, function() {
+        var r = JSON.stringify(data);
+        //cleartextStream.write(r + "<EOF>", function() {
+        cleartextStream.write(r, function() {
             console.log("written");
             if(callback) {callback();};
         });

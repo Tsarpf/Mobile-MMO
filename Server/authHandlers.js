@@ -5,7 +5,7 @@ var path = require('path'),
     userModel = require('./models/user');
     userClass = require('./UserClass.js');
     resObject = require('./genericResponseObject.js');
-    replaceProperties = require('./utils.js');
+    replaceProperties = require('./utils.js').replaceProperties;
 
 mongoose.connect('mongodb://localhost/test');
 
@@ -21,7 +21,6 @@ var loginHandler = function(eventData, callback) {
     var req = {body: {username: username, password: password}};
     passport.authenticate('local', function(err, user, info) {
         if(!user) {
-            console.log("login failed");
             var msg = resObject("loginEvent", "rejected");
             callback(msg);
             return;
