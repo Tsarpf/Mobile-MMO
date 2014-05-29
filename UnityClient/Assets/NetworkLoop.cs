@@ -73,7 +73,7 @@ public class NetworkLoop
     private void Authenticate()
     {
         //TODO: authentication handlinga ödlfjglkj
-        LoginEvent levent = new LoginEvent();
+        LoginRequestEvent levent = new LoginRequestEvent();
         levent.username = "tsurba";
         levent.password = "test1";
         //WriteJSONMessage(stream, levent);

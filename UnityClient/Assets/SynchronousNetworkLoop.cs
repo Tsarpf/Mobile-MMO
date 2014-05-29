@@ -50,7 +50,7 @@ public class SynchronousNetworkLoop : MonoBehaviour {
 		}
 
 		//TODO: authentication handlinga ödlfjglkj
-        LoginEvent levent = new LoginEvent();
+        LoginRequestEvent levent = new LoginRequestEvent();
         levent.username = "tsurba";
         levent.password = "test1";
         //WriteJSONMessage(stream, levent);
@@ -62,51 +62,53 @@ public class SynchronousNetworkLoop : MonoBehaviour {
 		byte[] buffer = new byte[2048];
 		StringBuilder messageData = new StringBuilder();
 
+		//Debug.Log(client.DataAvailable);
 		if (!client.DataAvailable)
 			return null;
-		if (!client.CanRead)
-			return null;
+
+		//if (!client.CanRead)
+		//	return null;
 		int bytes = sslStream.Read(buffer, 0, buffer.Length);
-		//if(bytes == 0)
+
+		//Decoder d  = Encoding.UTF8.GetDecoder();
+		//char[] cs = new char[d.GetCharCount(buffer, 0, bytes)];
+		//d.GetChars(buffer, 0, bytes, cs, 0);
+        
+		//string test = "";
+		//for (int i = 0; i < cs.Length; i++)
 		//{
-		//    return null;
+		//	test += cs[i];
 		//}
-		while (client.DataAvailable)
-		{
-			Decoder decoder = Encoding.UTF8.GetDecoder();
-			char[] chars = new char[decoder.GetCharCount(buffer, 0, bytes)];
-			decoder.GetChars(buffer, 0, bytes, chars, 0);
-			messageData.Append(chars);
-			//if (messageData.ToString().IndexOf("<EOF>") != -1)
-			//{
-			//    break;
-			//}
-			if (client.CanRead)
-			{
-				bytes = sslStream.Read(buffer, 0, buffer.Length);
-			}
-			else
-			{
-				bytes = 0;
-			}
-		}
+		string data = "";
+        Decoder decoder = Encoding.UTF8.GetDecoder();
+        char[] chars = new char[decoder.GetCharCount(buffer, 0, bytes)];
+        decoder.GetChars(buffer, 0, bytes, chars, 0);
+        for (int i = 0; i < chars.Length; i++)
+        {
+            data += chars[i];
+        }
+        //if (messageData.ToString().IndexOf("<EOF>") != -1)
+        //{
+        //    break;
+        //}
 
+		if (data.Trim() == "")
+			return null;
 
-
-		return messageData.ToString();
+		return data.Trim();
 	}
 
-	// Update is called once per frame
 	void Update ()
 	{
 		//Read from server (using ssl stream) -- if stuff found, write it to the network read queue?
 		string incomingData = ReadMessage(stream, client);
 		if (incomingData != null)
 		{
-			//JSONEvent readEvent = JsonConvert.DeserializeObject<JSONEvent>(incomingData);
+		    //JSONEvent readEvent = JsonConvert.DeserializeObject<JSONEvent>(incomingData);
 			ReadQueue.Write(incomingData);
 
 		}
+		//stream.BeginRead(buffer, 0, buffer.Length, new AsyncCallback(ReadCallback), stream);
 
 		JSONEvent newEvent = WriteQueue.Read();     //read from write queue, send it to socket using write*stuff
 		if (newEvent != null)
