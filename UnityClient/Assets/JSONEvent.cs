@@ -19,6 +19,11 @@ public abstract class JSONEvent
     }
 }
 
+public class JoinAreaRequest : JSONEvent
+{
+	public string areaId;
+	public string password;
+}
 public class RegisterRequestEvent : JSONEvent
 {
     //public static readonly string EventType = "Register";

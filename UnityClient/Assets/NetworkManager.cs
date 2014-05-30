@@ -33,7 +33,18 @@ public class NetworkManager : MonoBehaviour
 
 		var obj = fastJSON.JSON.Parse(derp) as Dictionary<string, object>;
 
-		Debug.Log(obj["type"]);
+		Debug.Log(obj["type"].ToString());
+		Debug.Log(obj["type"].ToString() == "loginEvent");
+        if(obj["type"].ToString() == "loginEvent")
+        {
+            if(obj["state"].ToString() == "accepted")
+			{
+				JoinAreaRequest r = new JoinAreaRequest();
+				r.areaId = "test";
+				r.password = "";
+				WriteQueue.Write(r);
+			}
+        }
 		//Debug.Log(obj);
 
 		//JObject o = JObject.Parse(derp);
