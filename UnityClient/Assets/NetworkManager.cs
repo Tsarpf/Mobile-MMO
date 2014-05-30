@@ -12,7 +12,8 @@ using System.Threading;
 
 public class NetworkManager : MonoBehaviour
 {
-
+    Dictionary<string, eventHandlerDes> eventHandlers;
+    public delegate void eventHandlerDes(object data);
 //    static readonly byte[] hardCodedServerCertificateHash = { 0xf1, 0x40, 0x8a, 0xd8, 0xb5, 0x1a, 0x42, 0xdb, 0x50, 0x44, 0x04, 0xa1, 0xa8, 0x92, 0xa8, 0xa8, 0x77, 0x41, 0x31, 0x2d };
 	// Use this for initialization
 
@@ -20,9 +21,15 @@ public class NetworkManager : MonoBehaviour
 		//NetworkLoop network = new NetworkLoop();
 		//Thread oThread = new Thread(new ThreadStart(network.RunNetworkLoop));
 		//oThread.Start();
+        eventHandlers = new Dictionary<string, eventHandlerDes>();
+        eventHandlers["moveEvent"] = moveHandler;
+        
+
 	}
 	
 	// Update is called once per frame
+    
+    
 	void Update () {
         //Get from readqueue
         var derp = ReadQueue.Read();
@@ -30,12 +37,20 @@ public class NetworkManager : MonoBehaviour
         {
 			return;
         }
+        Debug.Log(derp);
+		Dictionary<string, object> obj = fastJSON.JSON.Parse(derp) as Dictionary<string, object>;
+        foreach(KeyValuePair<string, object> kvp in obj)
+        {
+            Debug.Log("key: " + kvp.Key + " value: " + kvp.Value);
+        }
 
-		var obj = fastJSON.JSON.Parse(derp) as Dictionary<string, object>;
-
+        eventHandlers[obj["type"].ToString()](obj["properties"]);
+        
+        //eventHandlerDes handler = moveHandler;
+        
 		Debug.Log(obj["type"]);
 		//Debug.Log(obj);
-
+        //dicshunary[obj["type"]](dem, argumentit);
 		//JObject o = JObject.Parse(derp);
 		//Debug.Log(o.Property("eventType"));
 		//Debug.Log(schema.Properties["eventType"]);
@@ -44,6 +59,11 @@ public class NetworkManager : MonoBehaviour
 		//string  test = JsonConvert.DeserializeObject(derp) as eventType;
 
 	}
+    public void moveHandler(object data)
+    {
+        
+    }
+
     class eventType 
 	{
 		string type = "";
