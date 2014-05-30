@@ -6,7 +6,7 @@ using UnityEngine;
 
 public abstract class JSONEvent
 {
-    public string eventtype
+    public string eventType
     {
         get
         {
