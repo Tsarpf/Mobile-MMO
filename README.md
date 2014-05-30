@@ -34,7 +34,7 @@ Money stuff ideas:
 - A simple chair could be something like 200 credits.
 - A customizable T-shirt (20*20 pixel area with custom chosen colors imprinted on avatar's shirt) etc. luxury items could be like 5 purchasable coins and not purchasable with credits at all.
 
-Purhcasable stuff:
+Purchasable stuff:
 - Purchasing interior decoration with virtual money
    * By grinding minigames you can get approximately 1 item, like a chair per 1-2 hours -> decorating an entire room requires hours and hours of playing.
-   * If you get the credits through buying purchasable-money for 10 eur, you can get a room full of stuff in just afew minutes
+   * If you get the credits through buying purchasable-money for 10 eur, you can get a room full of stuff in just a few minutes
