@@ -6,18 +6,25 @@ using UnityEngine;
 
 public abstract class JSONEvent
 {
-    public string eventtype
+    public string eventType
     {
         get
         {
-            return this.GetType().Name.Substring(0, this.GetType().Name.Length - "Event".Length).ToLower();
+            string eventName = this.GetType().Name.Substring(0, this.GetType().Name.Length - "Event".Length);
+            eventName = eventName[0].ToString().ToLower().ToCharArray()[0] + eventName.Substring(1);
+			return eventName;
         }
         set
         { }
     }
 }
 
-public class RegisterEvent : JSONEvent
+public class JoinAreaRequest : JSONEvent
+{
+	public string areaId;
+	public string password;
+}
+public class RegisterRequestEvent : JSONEvent
 {
     //public static readonly string EventType = "Register";
     public string username;
@@ -25,7 +32,7 @@ public class RegisterEvent : JSONEvent
     public string email;
 }
 
-public class LoginEvent : JSONEvent
+public class LoginRequestEvent : JSONEvent
 {
     public string username;
     public string password;

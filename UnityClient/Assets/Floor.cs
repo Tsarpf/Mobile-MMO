@@ -12,7 +12,6 @@ class Floor
     GameObject[][] cells;
     public Floor(Material defaultMaterial, Material gridMaterial, int sizeX, int sizeY)
     {
-	    Debug.Log("derpander");
         floorMats = new Material[2];
         floorMats[0] = gridMaterial;
         floorMats[1] = defaultMaterial;
@@ -20,12 +19,10 @@ class Floor
         this.sizeX = sizeX;
         this.sizeY = sizeY;
 
-	    Debug.Log("derpander");
         initializeCells();
     }
     private void initializeCells()
     {
-	    Debug.Log("sizeX " + sizeX);
         cells = new GameObject[sizeX][];
         Material[] mats = floorMats;
         for (int x = 0; x < sizeX; x++)

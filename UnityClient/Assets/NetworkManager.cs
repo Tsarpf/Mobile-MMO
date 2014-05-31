@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-//using Newtonsoft.Json;
+using fastJSON;
+
 using System.Threading;
 
 public class NetworkManager : MonoBehaviour
@@ -16,22 +17,48 @@ public class NetworkManager : MonoBehaviour
 	// Use this for initialization
 
 	void Start () {
-        NetworkLoop network = new NetworkLoop();
-        Thread oThread = new Thread(new ThreadStart(network.RunNetworkLoop));
-        oThread.Start();
+		//NetworkLoop network = new NetworkLoop();
+		//Thread oThread = new Thread(new ThreadStart(network.RunNetworkLoop));
+		//oThread.Start();
 	}
 	
 	// Update is called once per frame
 	void Update () {
         //Get from readqueue
         var derp = ReadQueue.Read();
-        if (derp != null)
+        if (derp == null)
         {
-            Debug.Log(derp);
+			return;
         }
-        //do what needs to be done
+
+		var obj = fastJSON.JSON.Parse(derp) as Dictionary<string, object>;
+
+		Debug.Log(obj["type"].ToString());
+		Debug.Log(obj["type"].ToString() == "loginEvent");
+        if(obj["type"].ToString() == "loginEvent")
+        {
+            if(obj["state"].ToString() == "accepted")
+			{
+				JoinAreaRequest r = new JoinAreaRequest();
+				r.areaId = "test";
+				r.password = "";
+				WriteQueue.Write(r);
+			}
+        }
+		//Debug.Log(obj);
+
+		//JObject o = JObject.Parse(derp);
+		//Debug.Log(o.Property("eventType"));
+		//Debug.Log(schema.Properties["eventType"]);
+
+        Debug.Log(derp);
+		//string  test = JsonConvert.DeserializeObject(derp) as eventType;
 
 	}
+    class eventType 
+	{
+		string type = "";
+    }
 
 
     
