@@ -18,19 +18,26 @@ var tls = require('tls'),
 
 var loggedInUsers = {};
 var areas = {}; //Todo implement loading from db
-areas["test"] = require('./area.js');
+areas["test"] = require('./area.js')();
 var options = {
     pfx: fs.readFileSync('tsarpf.pfx'),
 };
 var clearTextServer = function(cleartextStream) {
     //cleartextStream.write("Hello");
-    var currentUser = {};
-    var serverHandlers = {
-        "registerRequest": require('./authHandlers.js')["register"],
-        "loginRequest": require('./authHandlers.js')["login"],
+    var loginClosure = function(serverHandlers, postLoginHandlers, cleartextStream) {
+        return function(receivedData, callback) {
+            return require('./authHandlers.js')["login"](receivedData, serverHandlers, postLoginHandlers, cleartextStream, callback); 
+        }
+    }
+    var postLoginHandlers = {
         "moveRequest": require('./moveHandler.js'),
         "joinAreaRequest": require('./joinAreaHandler.js')
     }
+    var serverHandlers = {};
+    serverHandlers["registerRequest"] = require('./authHandlers.js')["register"];
+    serverHandlers["loginRequest"] = loginClosure(serverHandlers, postLoginHandlers, cleartextStream);
+    
+    var currentUser = {};
     cleartextStream.on("error", function(err){
         //something
         console.log(currentUser.getName() + " errored:");
@@ -49,7 +56,7 @@ var clearTextServer = function(cleartextStream) {
         }
 
         console.log('received stuff: ' + receivedData);
-        var eventType = receivedData["eventtype"];
+        var eventType = receivedData["eventType"];
         if(eventType in serverHandlers)
         {
             //save the closure thingy

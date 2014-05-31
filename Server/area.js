@@ -1,3 +1,4 @@
+var resObject = require('./genericResponseObject.js');
 var area = function() {
     //var playersInArea = {};
     var players = {};
@@ -51,7 +52,7 @@ var area = function() {
             }
             else
             {
-                var playerData = players[playerName].getDescriptionObject();
+                var playerData = players[playerName].instance.getDescriptionObject();
                 playersData.push(playerData);
             }
         }
@@ -60,9 +61,12 @@ var area = function() {
         
         return robject;
     }
-    var mPlayerCanJoin = function(player)
+    pub.sendAll = function(msg)
     {
-        return true;
+        for(var player in players)
+        {
+            players[player].instance.send(msg);
+        }
     }
     pub.join = function(player, password)
     {
@@ -78,6 +82,17 @@ var area = function() {
         if(password !== mPassword)
         {
             return "invalid password";
+        }
+
+        var msg = {startingPosition: mStartingPosition, username: player.getName()};
+        var msgObj = resObject("remotePlayerJoinEvent", msg);
+        for(var plr in players)
+        {
+            if(plr != player.getName())
+            {
+                //Tad ugly for this to be here
+                players[plr].send(msgObj);
+            }
         }
 
         player.setCurrentArea(this);
@@ -102,6 +117,10 @@ var area = function() {
         {
             return players[user.getName()].position;
         }
+    }
+    var mPlayerCanJoin = function(player)
+    {
+        return true;
     }
     var mGetRoute = function(startPos, targetPos)
     {

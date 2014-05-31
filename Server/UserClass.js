@@ -1,7 +1,8 @@
 
 
-var user = function(userModel) {
+var user = function(userModel, stream) {
     var mUser = userModel;
+    var mStream = stream;
     var mName = mUser.username;
     var mCurrentArea = null;
     var mMoving = false;
@@ -47,6 +48,14 @@ var user = function(userModel) {
         robject.position = pub.getCurrentPosition();
         //add more when needed.
         return robject;
+    }
+    pub.send = function(msg)
+    {
+        var message = JSON.stringify(msg);
+        mStream.write(message, function() {
+            console.log("wrote to " + mName + ": ");
+            console.log(message);
+        });
     }
 
     var mTeardown = function()

@@ -26,7 +26,11 @@ var moveRequestHandler = function(eventData, callback) {
     moveEvent.from = startPos;
     moveEvent.to = route;
 
-    callback(moveEvent);    
+    var msg = resObject("moveEvent", moveEvent);
+
+    area.sendAll(msg);
+
+    //callback(msg);
 }
 
 module.exports = moveRequestHandler;
