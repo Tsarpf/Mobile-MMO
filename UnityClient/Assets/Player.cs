@@ -1,28 +1,31 @@
-﻿using Assets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 
-    class Player
+public class Player
     {
-        GameObject prefab = (GameObject)Resources.Load("enemy", typeof(GameObject));
+        GameObject prefab = (GameObject)Resources.Load("RemotePlayer", typeof(GameObject));
         GameObject playerObj;
-        Vector2 position;
+        Vector2 targetPosition;
+        string username;
         //PlayerMonoBehaviour 
-        public Player()
+        public Player(string username, Vector2 position)
         {
-            GameObject instance = GameObject.Instantiate(prefab) as GameObject;
-            var derp = instance.GetComponent<PlayerMonoBehaviour>();
-            //derp.Initialize(this);
+            this.username = username;
+            playerObj = GameObject.Instantiate(prefab) as GameObject;
+            playerObj.transform.position = new Vector3(position.x, 0, position.y);
         }
 
         public void Update()
         {
-            position = playerObj.transform.position;
 
-
+            Vector2 pos = new Vector2(playerObj.transform.position.x, playerObj.transform.position.y);
+            if (V2Equal(pos, targetPosition))
+            {
+                playerObj.transform.rigidbody.velocity = new Vector3(0, 0, 0);
+            }
             
 
         }
@@ -34,11 +37,11 @@ using UnityEngine;
 
         public void moveTo(Vector2 targetpos)
         {
-            
-            //Vector3 tgt = new Vector3(targetpos.x, 0, targetpos.y);
-            if (!V2Equal(targetpos, position))
+            targetPosition = targetpos;
+            Vector2 pos = new Vector2(playerObj.transform.position.x, playerObj.transform.position.y);
+            if (!V2Equal(targetpos, pos))
             {
-                Vector3 direction = targetpos - position;
+                Vector3 direction = targetPosition - pos;
                 direction = new Vector3(direction.normalized.x, 0, direction.normalized.z);
                 playerObj.transform.rigidbody.velocity = direction * 3;
             }
@@ -47,9 +50,9 @@ using UnityEngine;
 
         bool V2Equal(Vector2 a, Vector2 b)
         {
-            a = new Vector3(a.x, a.y, 0);
-            b = new Vector3(b.x, b.y, 0);
-            return Vector3.SqrMagnitude(a - b) < 0.001;
+            //a = new Vector3(a.x, a.y, 0);
+            //b = new Vector3(b.x, b.y, 0);
+            return Vector2.SqrMagnitude(a - b) < 0.001; 
         }
 
     }

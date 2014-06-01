@@ -86,7 +86,7 @@ public class NetworkManager : MonoBehaviour
             toVectors.Add(new Vector2(int.Parse(sinep["x"].ToString()), int.Parse(sinep["y"].ToString())));
         }
 
-        
+        players[username].moveTo(toVectors[0]);
      
     }
 
@@ -104,12 +104,21 @@ public class NetworkManager : MonoBehaviour
 
     public void joinAreaHandler(object data)
     {
+        //Create local player
+        
 
+        int playerCount = 1;
+        for(int i = 0; i < playerCount; i++)
+        {
+            string playerName = "ses";
+            Player player = new Player(playerName, new Vector2(0, 0));
+            players[playerName] = player;
+        }
     }
 
     public void infoHandler(object data)
     {
-
+        Debug.Log(data);
     }
 
     public void registerHandler(object data)

@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assets
+class Area
 {
-    class Area
+    Dictionary<string, Player> playersInRoom;
+
+
+
+    public void joinRemotePlayer(string playername) 
     {
-        Dictionary<string, Player> playersInRoom;
-
-
-
-        public void joinRemotePlayer(string playername) 
-        {
-            playersInRoom.Add(playername, new Player());
-        }
-
+        //playersInRoom.Add(playername, new Player());
     }
+
 }
