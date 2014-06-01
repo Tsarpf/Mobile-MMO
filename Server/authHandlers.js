@@ -1,11 +1,11 @@
 var path = require('path'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
-    mongoose = require('mongoose');
-    userModel = require('./models/user');
-    userClass = require('./UserClass.js');
-    resObject = require('./genericResponseObject.js');
-    replaceProperties = require('./utils.js').replaceProperties;
+    mongoose = require('mongoose'),
+    userModel = require('./models/user'),
+    userClass = require('./UserClass.js'),
+    resObject = require('./genericResponseObject.js'),
+    replaceProperties = require('./utils.js').replaceProperties
 
 mongoose.connect('mongodb://localhost/test');
 
@@ -13,7 +13,7 @@ passport.use(userModel.createStrategy());
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
 
-var loginHandler = function(eventData, callback) {
+var loginHandler = function(eventData, serverHandlers, postLoginHandlers, cleartextStream, callback) {
     var username = eventData["username"];
     var password = eventData["password"];
 
@@ -26,8 +26,10 @@ var loginHandler = function(eventData, callback) {
             return;
         }
 
+        replaceProperties(serverHandlers, postLoginHandlers);
+
         //Saves user to logged in users and update server session user info thingy
-        var userClassed = userClass(user);
+        var userClassed = userClass(user, cleartextStream);
         //eventData.user = userReference;
         replaceProperties(eventData.user, userClassed);
         eventData.users[userClassed.getUsername()] = userClassed;
@@ -44,7 +46,7 @@ var registerHandler = function(eventData, callback) {
     var username = eventData["username"];
     var password = eventData["password"];
     var email = eventData["email"];
-    userModel.register(new userModel({username: username}), password, email, function(err, user) {
+    userModel.register(new userModel({username: username, email: email}), password, email, function(err, user) {
         if(err){
             console.log("Error in registration: " + err);
             var msg = resObject("registerEvent", "rejected"); 

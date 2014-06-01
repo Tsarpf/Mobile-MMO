@@ -7,7 +7,10 @@ var joinAreaHandler = function(eventData, callback) {
     var areaPassword = null;
     if("password" in eventData)
     {
-        areaPassword = eventData["password"];
+        if(eventData["password"] != "")
+        {
+            areaPassword = eventData["password"];
+        }   
     }
 
     var area = areas[areaId]; 
@@ -20,6 +23,19 @@ var joinAreaHandler = function(eventData, callback) {
 
 
     var areaDesc = area.getDescriptionObject();
+    for(var i = 0; i < areaDesc.playersData.length; i++)
+    {
+        if(areaDesc.playersData[i].username === user.getName())
+        {
+            areaDesc.playersData.splice(i,1);
+            break;
+        }
+    }
+    
+
+     
 
     return callback(resObject("joinAreaEvent", areaDesc));
 }
+
+module.exports = joinAreaHandler;

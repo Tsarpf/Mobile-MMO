@@ -1,7 +1,7 @@
-module.exports = function(eventType, state) {
+module.exports = function(eventType, properties) {
     var obj = {
         type: eventType,
-        state: state 
+        properties: properties 
     }
 
     return obj;
