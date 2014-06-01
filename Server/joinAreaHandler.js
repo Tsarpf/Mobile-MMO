@@ -23,14 +23,14 @@ var joinAreaHandler = function(eventData, callback) {
 
 
     var areaDesc = area.getDescriptionObject();
-    for(var i = 0; i < areaDesc.playersData.length; i++)
-    {
-        if(areaDesc.playersData[i].username === user.getName())
-        {
-            areaDesc.playersData.splice(i,1);
-            break;
-        }
-    }
+    //for(var i = 0; i < areaDesc.playersData.length; i++)
+    //{
+    //    if(areaDesc.playersData[i].username === user.getName())
+    //    {
+    //        areaDesc.playersData.splice(i,1);
+    //        break;
+    //    }
+    //}
     
 
      
