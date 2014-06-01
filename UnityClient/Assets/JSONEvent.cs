@@ -19,7 +19,7 @@ public abstract class JSONEvent
     }
 }
 
-public class JoinAreaRequest : JSONEvent
+public class JoinAreaRequestEvent : JSONEvent
 {
 	public string areaId;
 	public string password;
@@ -45,9 +45,9 @@ public class MoveRequestEvent : JSONEvent
 
 public class MoveEvent : JSONEvent
 {
-    public string username;
+    public string user;
 	public Vector2JSON from;
-	public Vector2JSON to;
+	public Vector2JSON[] to;
 }
 
 
