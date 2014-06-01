@@ -1,4 +1,4 @@
-
+var resObject = require('./genericResponseObject.js');
 
 var user = function(userModel, stream) {
     var mUser = userModel;
@@ -56,6 +56,10 @@ var user = function(userModel, stream) {
             console.log("wrote to " + mName + ": ");
             console.log(message);
         });
+    }
+    pub.closeStream = function()
+    {
+        mStream.destroy();
     }
 
     var mTeardown = function()

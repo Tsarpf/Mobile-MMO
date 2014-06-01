@@ -36,6 +36,12 @@ var clearTextServer = function(cleartextStream) {
     var serverHandlers = {};
     serverHandlers["registerRequest"] = require('./authHandlers.js')["register"];
     serverHandlers["loginRequest"] = loginClosure(serverHandlers, postLoginHandlers, cleartextStream);
+
+    /*
+    cleartextStream.on("end", function() {
+        clearTextServer.close();
+    });
+    */
     
     var currentUser = {};
     cleartextStream.on("error", function(err){
