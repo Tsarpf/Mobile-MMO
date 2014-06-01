@@ -12,11 +12,8 @@ public class Initializer : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		SpaceDimensionX = 30; SpaceDimensionY = 20;
-		
-        Material grid = Resources.Load("Materials/grid") as Material;
-        Material floorMat = Resources.Load("Materials/grayfloor") as Material;
 
-		floor = new Floor(floorMat, grid, SpaceDimensionX, SpaceDimensionY);
+        initializeRoom(SpaceDimensionX, SpaceDimensionY);
 
 
         //Construct data handling stuff
@@ -52,4 +49,11 @@ public class Initializer : MonoBehaviour {
 
 	}
     */
+
+    public void initializeRoom(int DimensionX, int DimensionY)
+    {
+        Material grid = Resources.Load("Materials/grid") as Material;
+        Material floorMat = Resources.Load("Materials/grayfloor") as Material;
+        floor = new Floor(floorMat, grid, DimensionX, DimensionY);
+    }
 }
