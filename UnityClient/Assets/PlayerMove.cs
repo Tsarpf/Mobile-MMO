@@ -87,32 +87,23 @@ public class PlayerMove : MonoBehaviour {
                     Debug.Log(readEvent);
                 }
                 */
-                moveTo(new Vector2(target.x, target.z)); //for testing
+                //moveTo(new Vector2(target.x, target.z)); //for testing
             }
             
-		}   
+        }
+
+    }
+		   
+
+        bool V3Equal(Vector3 a, Vector3 b)
+        {
+            a = new Vector3(a.x, 0, a.z);
+            b = new Vector3(b.x, 0, b.z);
+            return Vector3.SqrMagnitude(a - b) < 0.001;
+        }
 
 		
 
 	}
 
-    public void moveTo(Vector2 targetpos)
-    {
-        Vector3 tgt = new Vector3(targetpos.x, 0, targetpos.y);
-        if (!V3Equal(tgt, position))
-        {
-            Vector3 direction = tgt - position;
-            direction = new Vector3(direction.normalized.x, 0, direction.normalized.z);
-            transform.rigidbody.velocity = direction * 3;
-        }
-
-    }
-
-
-	bool V3Equal(Vector3 a, Vector3 b){
-		a = new Vector3 (a.x, 0, a.z);
-		b = new Vector3 (b.x, 0, b.z);
-		return Vector3.SqrMagnitude(a - b) < 0.001;
-	}
-
-}
+    

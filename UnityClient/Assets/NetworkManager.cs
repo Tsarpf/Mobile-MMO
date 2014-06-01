@@ -47,14 +47,12 @@ public class NetworkManager : MonoBehaviour
         }
         Debug.Log(derp);
 		Dictionary<string, object> obj = fastJSON.JSON.Parse(derp) as Dictionary<string, object>;
-        foreach(KeyValuePair<string, object> kvp in obj)
-        {
-            Debug.Log("key: " + kvp.Key + " value: " + kvp.Value);
-        }
-
+        //foreach(KeyValuePair<string, object> kvp in obj)
+        //{
+        //   Debug.Log("key: " + kvp.Key + " value: " + kvp.Value);
+        //}
         eventHandlers[obj["type"].ToString()](obj["properties"]);
         
-        //eventHandlerDes handler = moveHandler;
         
 		Debug.Log(obj["type"]);
 
@@ -69,9 +67,27 @@ public class NetworkManager : MonoBehaviour
 	}
     public void moveHandler(object data)
     {
-        Dictionary<string, object> move = fastJSON.JSON.Parse(data.ToString()) as Dictionary<string, object>;
-        Debug.Log("sinep" + move["user"]);
+        Dictionary<string, object> movedata = data as Dictionary<string, object>;
+        Debug.Log("sinep" + movedata.ToString());
+        foreach(KeyValuePair<string, object> kvp in movedata)
+        {
+           Debug.Log("key: " + kvp.Key + " value: " + kvp.Value);
+        }
+        string username = movedata["user"].ToString();
+        Dictionary<string, object> from = movedata["from"] as Dictionary<string, object>;
+        Vector2 fromVector = new Vector2(int.Parse(from["x"].ToString()), int.Parse(from["y"].ToString()));
+        Debug.Log("from: " + fromVector.x);
+        List<object> to = movedata["to"] as List<object>;
+        List<Vector2> toVectors = new List<Vector2>();
+
+        foreach (var pair in to)
+        {
+            Dictionary<string, object> sinep = pair as Dictionary<string, object>;
+            toVectors.Add(new Vector2(int.Parse(sinep["x"].ToString()), int.Parse(sinep["y"].ToString())));
+        }
+
         
+     
     }
 
     public void loginHandler(object data)

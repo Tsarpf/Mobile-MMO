@@ -7,5 +7,14 @@ namespace Assets
 {
     class Area
     {
+        Dictionary<string, Player> playersInRoom;
+
+
+
+        public void joinRemotePlayer(string playername) 
+        {
+            playersInRoom.Add(playername, new Player());
+        }
+
     }
 }
