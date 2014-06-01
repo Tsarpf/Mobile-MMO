@@ -102,17 +102,28 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
+    UnityEngine.Object localPrefab = Resources.Load("LocalPlayer");
+    UnityEngine.Object remotePrefab = Resources.Load("RemotePlayer");
     public void joinAreaHandler(object data)
     {
         //Create local player
-        
+		GameObject local = GameObject.Instantiate(localPrefab) as GameObject;
+        string playerName = "ses";
+        Player player = new Player(local, playerName, new Vector2(0, 0));
+        players[playerName] = player;
 
+        //Get player count from JSON
         int playerCount = 1;
         for(int i = 0; i < playerCount; i++)
         {
-            string playerName = "ses";
-            Player player = new Player(playerName, new Vector2(0, 0));
-            players[playerName] = player;
+			GameObject remote = GameObject.Instantiate(remotePrefab) as GameObject;
+
+            //Get the remote player name and position from JSON
+			string remotePlayerName = "jotain";
+			Vector2 position = new Vector2(0, 0);
+
+			Player remotePlayer = new Player(remote, remotePlayerName, position);
+			players[remotePlayerName] = remotePlayer;
         }
     }
 
