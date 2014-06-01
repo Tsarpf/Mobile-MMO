@@ -110,6 +110,7 @@ public class NetworkManager : MonoBehaviour
 		GameObject local = GameObject.Instantiate(localPrefab) as GameObject;
         string playerName = "ses";
         Player player = new Player(local, playerName, new Vector2(0, 0));
+		local.GetComponent<PlayerMonoBehaviour>().Initialize(player); //This is a bit ugly, but needed if we don't have a common Player base(=super) class for both local and remote players.
         players[playerName] = player;
 
         //Get player count from JSON
@@ -123,6 +124,7 @@ public class NetworkManager : MonoBehaviour
 			Vector2 position = new Vector2(0, 0);
 
 			Player remotePlayer = new Player(remote, remotePlayerName, position);
+		    remote.GetComponent<PlayerMonoBehaviour>().Initialize(remotePlayer); //This is a bit ugly, but needed if we don't have a common Player base(=super) class for both local and remote players.
 			players[remotePlayerName] = remotePlayer;
         }
     }
