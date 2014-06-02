@@ -60,7 +60,7 @@ public class MoveRequestEvent : JSONEvent
 
 public class MoveEvent : JSONEvent
 {
-    public string user;
+    public string username;
 	public Vector2JSON from;
 	public Vector2JSON[] to;
 }

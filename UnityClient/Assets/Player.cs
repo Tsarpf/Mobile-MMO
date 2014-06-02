@@ -7,7 +7,6 @@ using UnityEngine;
 public class Player
 {
     //GameObject prefab = (GameObject)Resources.Load("RemotePlayer", typeof(GameObject));
-	GameObject prefab;
     GameObject playerObj;
     Vector2 targetPosition;
     Queue<Vector2JSON> route;
@@ -44,6 +43,11 @@ public class Player
     {
         //ses
     }
+
+    public void Destroy()
+	{
+		GameObject.Destroy(playerObj);
+	}
 
     public void moveTo(Vector2JSON[] route)
     {

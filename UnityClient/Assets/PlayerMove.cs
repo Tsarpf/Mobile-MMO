@@ -44,9 +44,6 @@ public class PlayerMove : MonoBehaviour {
 			//Camera des = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 			//des.ortho
 			//Camera.main.orthographic = true;
-			Debug.Log ("mouse down");
- 
-
             if (Physics.Raycast(ray, out hit))
             {
 
@@ -81,7 +78,6 @@ public class PlayerMove : MonoBehaviour {
 				};
 
                 WriteQueue.Write(request);
-                Debug.Log("written: " + request);
                 //var test = WriteQueue.Read();
                 //Debug.Log("test " + test);
                 /*

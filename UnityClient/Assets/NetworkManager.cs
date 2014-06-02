@@ -41,6 +41,7 @@ public class NetworkManager : MonoBehaviour
         eventHandlers["info"] = infoHandler;
         eventHandlers["registerEvent"] = registerHandler;
         eventHandlers["remotePlayerJoinEvent"] = remotePlayerJoinHandler;
+        eventHandlers["quitEvent"] = quitHandler;
         
 
 	}
@@ -55,21 +56,27 @@ public class NetworkManager : MonoBehaviour
 		Dictionary<string, object> obj = fastJSON.JSON.Parse(read) as Dictionary<string, object>;
 
 		string json = fastJSON.JSON.ToJSON(obj["properties"]);
-		Debug.Log(json);
 		eventHandlers[obj["type"].ToString()](json);
+	}
+
+    public void quitHandler(string data)
+	{
+		data = data.Replace("\"", "");
+		Debug.Log("got quit" + data);
+		players[data].Destroy();
+		players[data] = null;
 	}
     public void moveHandler(string data)
     {
 		MoveEvent eventData = fastJSON.JSON.ToObject<MoveEvent>(data);
 
-        players[eventData.user].moveTo(eventData.to);
+        players[eventData.username].moveTo(eventData.to);
 	}
 
     public void loginHandler(string data)
     {
 		data = data.Replace("\"", "");
         //fastJSON.JSON.ToObject<string>
-		Debug.Log("sup: " + data);
         if (data.ToString() == "accepted")
         {
             JoinAreaRequestEvent r = new JoinAreaRequestEvent();
@@ -126,6 +133,10 @@ public class NetworkManager : MonoBehaviour
     {
         RemotePlayerData playerData = fastJSON.JSON.ToObject<RemotePlayerData>(data);
 		string playerName = playerData.username;
+		//if(players.ContainsKey(playerName))
+		//{
+		//	players[playerName]
+		//}
 
         GameObject go = null;
         if(playerName == localUsername)
