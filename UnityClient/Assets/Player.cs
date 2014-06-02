@@ -10,6 +10,7 @@ public class Player
 	GameObject prefab;
     GameObject playerObj;
     Vector2 targetPosition;
+    Queue<Vector2JSON> route;
     string username;
     //PlayerMonoBehaviour 
     public Player(GameObject prefab, string username, Vector2 position)
@@ -17,15 +18,25 @@ public class Player
         this.username = username;
 		playerObj = prefab;
         playerObj.transform.position = new Vector3(position.x, 0, position.y);
+        route = new Queue<Vector2JSON>();
     }
 
     public void Update()
     {
 
-        Vector2 pos = new Vector2(playerObj.transform.position.x, playerObj.transform.position.y);
+        Vector2 pos = new Vector2(playerObj.transform.position.x, playerObj.transform.position.z);
         if (V2Equal(pos, targetPosition))
         {
             playerObj.transform.rigidbody.velocity = new Vector3(0, 0, 0);
+            if (route.Count > 0)
+            {
+                Vector2JSON next = route.Dequeue();
+                if (next != null)
+                {
+                    move(next);
+                }
+            }
+            
         }
         
 
@@ -36,17 +47,27 @@ public class Player
         //ses
     }
 
-    public void moveTo(Vector2 targetpos)
+    public void moveTo(Vector2JSON[] route)
     {
-        targetPosition = targetpos;
-        Vector2 pos = new Vector2(playerObj.transform.position.x, playerObj.transform.position.y);
-        if (!V2Equal(targetpos, pos))
+        this.route = new Queue<Vector2JSON>();
+        foreach (var sinep in route)
         {
-            Vector3 direction = targetPosition - pos;
+            this.route.Enqueue(sinep);
+        }
+        
+
+    }
+
+    void move(Vector2JSON nexttarget)
+    {
+        targetPosition = new Vector2(nexttarget.x, nexttarget.y);
+        Vector2 pos = new Vector2(playerObj.transform.position.x, playerObj.transform.position.z);
+        if (!V2Equal(targetPosition, pos))
+        {
+            Vector3 direction = new Vector3(targetPosition.x, 0, targetPosition.y) - new Vector3(pos.x, 0, pos.y);
             direction = new Vector3(direction.normalized.x, 0, direction.normalized.z);
             playerObj.transform.rigidbody.velocity = direction * 3;
         }
-
     }
 
     bool V2Equal(Vector2 a, Vector2 b)
