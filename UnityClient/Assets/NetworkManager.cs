@@ -19,13 +19,13 @@ public class NetworkManager : MonoBehaviour
 	GameObject localPrefab;
 	GameObject remotePrefab;
 
-	string localUsername = "sinep";
+	string localUsername = "tsurba";
 
 	void Start () {
 
         LoginRequestEvent levent = new LoginRequestEvent();
         levent.username = localUsername;
-        levent.password = "olut";
+        levent.password = "test1";
 		WriteQueue.Write(levent);
 
 
@@ -66,6 +66,7 @@ public class NetworkManager : MonoBehaviour
 		Debug.Log("got quit " + data);
 		players[data].Destroy();
 		players[data] = null;
+		players.Remove(data);
 	}
     public void moveHandler(string data)
     {
@@ -134,6 +135,13 @@ public class NetworkManager : MonoBehaviour
     {
         RemotePlayerData playerData = fastJSON.JSON.ToObject<RemotePlayerData>(data);
 		string playerName = playerData.username;
+
+        if(players.ContainsKey(playerName))
+		{
+			players[playerName].Destroy();
+			players[playerName] = null;
+			players.Remove(playerName);
+		}
 
         GameObject go = GameObject.Instantiate(remotePrefab) as GameObject;
 		Vector2JSON pos = playerData.position;

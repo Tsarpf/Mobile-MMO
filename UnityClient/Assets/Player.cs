@@ -18,6 +18,7 @@ public class Player
 		playerObj = prefab;
         playerObj.transform.position = new Vector3(position.x, 0, position.y);
         route = new Queue<Vector2JSON>();
+		targetPosition = new Vector2(position.x, position.y);
     }
 
     public void Update()
