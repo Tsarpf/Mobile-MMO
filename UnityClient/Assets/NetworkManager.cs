@@ -19,13 +19,13 @@ public class NetworkManager : MonoBehaviour
 	GameObject localPrefab;
 	GameObject remotePrefab;
 
-	string localUsername = "tsurba";
+	string localUsername = "sinep";
 
 	void Start () {
 
         LoginRequestEvent levent = new LoginRequestEvent();
         levent.username = localUsername;
-        levent.password = "test1";
+        levent.password = "olut";
 		WriteQueue.Write(levent);
 
 
@@ -56,13 +56,14 @@ public class NetworkManager : MonoBehaviour
 		Dictionary<string, object> obj = fastJSON.JSON.Parse(read) as Dictionary<string, object>;
 
 		string json = fastJSON.JSON.ToJSON(obj["properties"]);
+		Debug.Log(obj["type"].ToString());
 		eventHandlers[obj["type"].ToString()](json);
 	}
 
     public void quitHandler(string data)
 	{
 		data = data.Replace("\"", "");
-		Debug.Log("got quit" + data);
+		Debug.Log("got quit " + data);
 		players[data].Destroy();
 		players[data] = null;
 	}
@@ -133,20 +134,8 @@ public class NetworkManager : MonoBehaviour
     {
         RemotePlayerData playerData = fastJSON.JSON.ToObject<RemotePlayerData>(data);
 		string playerName = playerData.username;
-		//if(players.ContainsKey(playerName))
-		//{
-		//	players[playerName]
-		//}
 
-        GameObject go = null;
-        if(playerName == localUsername)
-        {
-            go = GameObject.Instantiate(localPrefab) as GameObject;
-        }
-        else
-        {
-            go = GameObject.Instantiate(remotePrefab) as GameObject;
-        }
+        GameObject go = GameObject.Instantiate(remotePrefab) as GameObject;
 		Vector2JSON pos = playerData.position;
         Vector2 position = new Vector2(pos.x, pos.y);
 
