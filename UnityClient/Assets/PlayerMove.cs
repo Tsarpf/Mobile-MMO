@@ -73,7 +73,13 @@ public class PlayerMove : MonoBehaviour {
                 //transform.rigidbody.velocity = new Vector3(-direction.x, 0, -direction.z);
                 //player.GetComponent<PlayerMove>().MoveTo(transform.position);
                 MoveRequestEvent request = new MoveRequestEvent();
-                request.to = new Vector2JSON(target.x, target.z);
+				//request.to = new Vector2JSON(target.x, target.z);
+                request.to = new Vector2JSON
+				{
+					x = target.x,
+					y = target.z
+				};
+
                 WriteQueue.Write(request);
                 Debug.Log("written: " + request);
                 //var test = WriteQueue.Read();
