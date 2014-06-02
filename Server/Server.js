@@ -50,7 +50,6 @@ var clearTextServer = function(cleartextStream) {
         console.log(err);
     });
     cleartextStream.on("data", function(data) {
-        console.log('data: ' + data);
         var receivedData;
         try {
             receivedData = JSON.parse(data);
@@ -61,7 +60,6 @@ var clearTextServer = function(cleartextStream) {
             return;
         }
 
-        console.log('received stuff: ' + receivedData);
         var eventType = receivedData["eventType"];
         if(eventType in serverHandlers)
         {
@@ -81,7 +79,7 @@ var clearTextServer = function(cleartextStream) {
             //process.nextTick(
                 serverHandlers[eventType](receivedData, function(responseData){
                     if(responseData) {
-                        console.log(loggedInUsers);
+                        //console.log(loggedInUsers);
                         console.log('writing back to client:')
                         console.log(responseData);
                         send(responseData);
@@ -99,7 +97,6 @@ var clearTextServer = function(cleartextStream) {
         var r = JSON.stringify(data);
         //cleartextStream.write(r + "<EOF>", function() {
         cleartextStream.write(r, function() {
-            console.log("written");
             if(callback) {callback();};
         });
     }

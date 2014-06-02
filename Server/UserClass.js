@@ -59,6 +59,11 @@ var user = function(userModel, stream) {
     }
     pub.closeStream = function()
     {
+        if(mCurrentArea !== null)
+        {
+            var quitMessage = resObject("quitEvent", mName);
+            mCurrentArea.sendAll(quitMessage);
+        }
         mStream.destroy();
     }
 

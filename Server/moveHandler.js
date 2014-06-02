@@ -22,7 +22,7 @@ var moveRequestHandler = function(eventData, callback) {
 
     var moveEvent = {};
 
-    moveEvent.user = user.getName();
+    moveEvent.username = user.getName();
     moveEvent.from = startPos;
     moveEvent.to = route;
 

@@ -84,14 +84,14 @@ var area = function() {
             return "invalid password";
         }
 
-        var msg = {startingPosition: mStartingPosition, username: player.getName()};
+        var msg = {position: mStartingPosition, username: player.getName()};
         var msgObj = resObject("remotePlayerJoinEvent", msg);
         for(var plr in players)
         {
             if(plr != player.getName())
             {
                 //Tad ugly for this to be here
-                players[plr].send(msgObj);
+                players[plr].instance.send(msgObj);
             }
         }
 

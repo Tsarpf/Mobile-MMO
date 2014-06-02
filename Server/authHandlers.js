@@ -34,7 +34,6 @@ var loginHandler = function(eventData, serverHandlers, postLoginHandlers, cleart
         replaceProperties(eventData.user, userClassed);
         if(userClassed.getUsername() in eventData.users)
         {
-            eventData.users[userClassed.getUsername()].send(resObject("info", "Logged in from another session. Closing this one"));
             eventData.users[userClassed.getUsername()].closeStream();
             delete eventData.users[userClassed.getUsername()];
         }
