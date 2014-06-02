@@ -21,13 +21,13 @@ public class NetworkManager : MonoBehaviour
 	GameObject localPrefab;
 	GameObject remotePrefab;
 
-	string localUsername = "tsurba";
+	string localUsername = "sinep";
 
 	void Start () {
 
         LoginRequestEvent levent = new LoginRequestEvent();
         levent.username = localUsername;
-        levent.password = "test1";
+        levent.password = "olut";
 		WriteQueue.Write(levent);
 
 
@@ -79,29 +79,11 @@ public class NetworkManager : MonoBehaviour
 	}
     public void moveHandler(object data)
     {
-        Dictionary<string, object> movedata = data as Dictionary<string, object>;
-        Debug.Log("sinep" + movedata.ToString());
-        foreach(KeyValuePair<string, object> kvp in movedata)
-        {
-           Debug.Log("key: " + kvp.Key + " value: " + kvp.Value);
-        }
-        string username = movedata["user"].ToString();
-        Dictionary<string, object> from = movedata["from"] as Dictionary<string, object>;
-        Vector2 fromVector = new Vector2(int.Parse(from["x"].ToString()), int.Parse(from["y"].ToString()));
-        Debug.Log("from: " + fromVector.x);
-        List<object> to = movedata["to"] as List<object>;
-        List<Vector2> toVectors = new List<Vector2>();
+        MoveEvent move = parseMoveEvent(data);
 
-        foreach (var pair in to)
-        {
-            Dictionary<string, object> sinep = pair as Dictionary<string, object>;
-            toVectors.Add(new Vector2(int.Parse(sinep["x"].ToString()), int.Parse(sinep["y"].ToString())));
-        }
-
-		Debug.Log(toVectors[0]);
-
-        players[username].moveTo(toVectors[0]);
+        players[move.user].moveTo(move.to);
      
+
     }
 
     public void loginHandler(object data)
@@ -165,6 +147,34 @@ public class NetworkManager : MonoBehaviour
 		string type = "";
     }
 
+    MoveEvent parseMoveEvent(object data)
+    {
+        MoveEvent move = new MoveEvent();
+
+        Dictionary<string, object> movedata = data as Dictionary<string, object>;
+        
+        move.user = movedata["user"].ToString();
+
+        Dictionary<string, object> from = movedata["from"] as Dictionary<string, object>;
+
+        Vector2 fromVector = new Vector2(int.Parse(from["x"].ToString()), int.Parse(from["y"].ToString()));
+        move.from = new Vector2JSON(fromVector);
+        Vector2JSON[] toVectors = new Vector2JSON[10];
+        List<object> to = movedata["to"] as List<object>;
+
+        int i = 0;
+        foreach (var pair in to)
+        {
+            Dictionary<string, object> sinep = pair as Dictionary<string, object>;
+            toVectors[i] = new Vector2JSON((new Vector2(int.Parse(sinep["x"].ToString()), int.Parse(sinep["y"].ToString()))));
+            i++;
+        }
+        move.to = toVectors;
+
+        Debug.Log(toVectors[0]);
+
+        return move;
+    }
 
     
 	
