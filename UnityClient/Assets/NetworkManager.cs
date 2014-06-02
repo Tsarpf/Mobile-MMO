@@ -107,6 +107,11 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
+    private void createNewPlayer()
+	{
+
+	}
+
     public void infoHandler(object data)
     {
         Debug.Log(data);
@@ -117,9 +122,26 @@ public class NetworkManager : MonoBehaviour
 
     }
 
-    public void remotePlayerJoinHandler(object data)
+    public void remotePlayerJoinHandler(string data)
     {
+        RemotePlayerData playerData = fastJSON.JSON.ToObject<RemotePlayerData>(data);
+		string playerName = playerData.username;
 
+        GameObject go = null;
+        if(playerName == localUsername)
+        {
+            go = GameObject.Instantiate(localPrefab) as GameObject;
+        }
+        else
+        {
+            go = GameObject.Instantiate(remotePrefab) as GameObject;
+        }
+		Vector2JSON pos = playerData.position;
+        Vector2 position = new Vector2(pos.x, pos.y);
+
+        Player player = new Player(go, playerName, position);
+        go.GetComponent<PlayerMonoBehaviour>().Initialize(player); //This is a bit ugly, but needed if we don't have a common Player base(=super) class for both local and remote players.
+        players[playerName] = player;
     }
 }
 

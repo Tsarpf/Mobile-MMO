@@ -38,8 +38,6 @@ public class Player
             }
             
         }
-        
-
     }
 
     public void Start()
