@@ -18,9 +18,21 @@ public class NetworkManager : MonoBehaviour
     Dictionary<string, Player> players = new Dictionary<string, Player>();
 //    static readonly byte[] hardCodedServerCertificateHash = { 0xf1, 0x40, 0x8a, 0xd8, 0xb5, 0x1a, 0x42, 0xdb, 0x50, 0x44, 0x04, 0xa1, 0xa8, 0x92, 0xa8, 0xa8, 0x77, 0x41, 0x31, 0x2d };
 	// Use this for initialization
+	GameObject localPrefab;
+	GameObject remotePrefab;
 
+	string localUsername = "tsurba";
 
 	void Start () {
+
+        LoginRequestEvent levent = new LoginRequestEvent();
+        levent.username = localUsername;
+        levent.password = "test1";
+		WriteQueue.Write(levent);
+
+
+        localPrefab = Resources.Load<GameObject>("LocalPlayer");
+        remotePrefab = Resources.Load<GameObject>("RemotePlayer");
 		//NetworkLoop network = new NetworkLoop();
 		//Thread oThread = new Thread(new ThreadStart(network.RunNetworkLoop));
 		//oThread.Start();
@@ -40,13 +52,13 @@ public class NetworkManager : MonoBehaviour
     
 	void Update () {
         //Get from readqueue
-        var derp = ReadQueue.Read();
-        if (derp == null)
+        var read  = ReadQueue.Read();
+        if (read == null)
         {
 			return;
         }
-        Debug.Log(derp);
-		Dictionary<string, object> obj = fastJSON.JSON.Parse(derp) as Dictionary<string, object>;
+        Debug.Log(read);
+		Dictionary<string, object> obj = fastJSON.JSON.Parse(read) as Dictionary<string, object>;
         //foreach(KeyValuePair<string, object> kvp in obj)
         //{
         //   Debug.Log("key: " + kvp.Key + " value: " + kvp.Value);
@@ -86,6 +98,8 @@ public class NetworkManager : MonoBehaviour
             toVectors.Add(new Vector2(int.Parse(sinep["x"].ToString()), int.Parse(sinep["y"].ToString())));
         }
 
+		Debug.Log(toVectors[0]);
+
         players[username].moveTo(toVectors[0]);
      
     }
@@ -102,15 +116,17 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    UnityEngine.Object localPrefab = Resources.Load("LocalPlayer");
-    UnityEngine.Object remotePrefab = Resources.Load("RemotePlayer");
+
     public void joinAreaHandler(object data)
     {
         //Create local player
 		GameObject local = GameObject.Instantiate(localPrefab) as GameObject;
-        string playerName = "ses";
+        string playerName = localUsername;
         Player player = new Player(local, playerName, new Vector2(0, 0));
-		local.GetComponent<PlayerMonoBehaviour>().Initialize(player); //This is a bit ugly, but needed if we don't have a common Player base(=super) class for both local and remote players.
+
+        //This is a bit ugly, but needed if we don't have a common Player base(=super) class for both local and remote players.
+        
+		local.GetComponent<PlayerMonoBehaviour>().Initialize(player); 
         players[playerName] = player;
 
         //Get player count from JSON
