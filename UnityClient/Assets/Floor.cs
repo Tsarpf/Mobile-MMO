@@ -9,6 +9,7 @@ class Floor
 {
     Material[] floorMats;
     private int sizeX, sizeY;
+	private float floorLevel = -1.5f;
     GameObject[][] cells;
     public Floor(Material defaultMaterial, Material gridMaterial, int sizeX, int sizeY)
     {
@@ -32,7 +33,7 @@ class Floor
             {
                 cells[x][y] = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 cells[x][y].AddComponent<Cell>();
-                cells[x][y].GetComponent<Cell>().Initialize(mats, new Vector3(x, 0, y), cells[x][y]);
+                cells[x][y].GetComponent<Cell>().Initialize(mats, new Vector3(x, floorLevel, y), cells[x][y]);
             }
         }
     }

@@ -44,9 +44,6 @@ public class PlayerMove : MonoBehaviour {
 			//Camera des = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 			//des.ortho
 			//Camera.main.orthographic = true;
-			Debug.Log ("mouse down");
- 
-
             if (Physics.Raycast(ray, out hit))
             {
 
@@ -73,9 +70,14 @@ public class PlayerMove : MonoBehaviour {
                 //transform.rigidbody.velocity = new Vector3(-direction.x, 0, -direction.z);
                 //player.GetComponent<PlayerMove>().MoveTo(transform.position);
                 MoveRequestEvent request = new MoveRequestEvent();
-                request.to = new Vector2JSON(target.x, target.z);
+				//request.to = new Vector2JSON(target.x, target.z);
+                request.to = new Vector2JSON
+				{
+					x = target.x,
+					y = target.z
+				};
+
                 WriteQueue.Write(request);
-                Debug.Log("written: " + request);
                 //var test = WriteQueue.Read();
                 //Debug.Log("test " + test);
                 /*
@@ -87,32 +89,23 @@ public class PlayerMove : MonoBehaviour {
                     Debug.Log(readEvent);
                 }
                 */
-                moveTo(new Vector2(target.x, target.z)); //for testing
+                //moveTo(new Vector2(target.x, target.z)); //for testing
             }
             
-		}   
+        }
+
+    }
+		   
+
+        bool V3Equal(Vector3 a, Vector3 b)
+        {
+            a = new Vector3(a.x, 0, a.z);
+            b = new Vector3(b.x, 0, b.z);
+            return Vector3.SqrMagnitude(a - b) < 0.001;
+        }
 
 		
 
 	}
 
-    public void moveTo(Vector2 targetpos)
-    {
-        Vector3 tgt = new Vector3(targetpos.x, 0, targetpos.y);
-        if (!V3Equal(tgt, position))
-        {
-            Vector3 direction = tgt - position;
-            direction = new Vector3(direction.normalized.x, 0, direction.normalized.z);
-            transform.rigidbody.velocity = direction * 3;
-        }
-
-    }
-
-
-	bool V3Equal(Vector3 a, Vector3 b){
-		a = new Vector3 (a.x, 0, a.z);
-		b = new Vector3 (b.x, 0, b.z);
-		return Vector3.SqrMagnitude(a - b) < 0.001;
-	}
-
-}
+    

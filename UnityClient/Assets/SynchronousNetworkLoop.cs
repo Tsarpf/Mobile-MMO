@@ -52,11 +52,6 @@ public class SynchronousNetworkLoop : MonoBehaviour {
 		//TODO: authentication handlinga ödlfjglkj
   
 
-        LoginRequestEvent levent = new LoginRequestEvent();
-        levent.username = "sinep";
-        levent.password = "olut";
-        //WriteJSONMessage(stream, levent);
-		WriteQueue.Write(levent);
 	}
 	static string ReadMessage(SslStream sslStream, NetworkStream client)
 	{

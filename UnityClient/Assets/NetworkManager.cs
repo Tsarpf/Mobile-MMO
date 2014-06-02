@@ -14,13 +14,23 @@ using Newtonsoft.Json;
 public class NetworkManager : MonoBehaviour
 {
     Dictionary<string, eventHandlerDes> eventHandlers;
-    public delegate void eventHandlerDes(object data);
+    public delegate void eventHandlerDes(string data);
     Dictionary<string, Player> players = new Dictionary<string, Player>();
-//    static readonly byte[] hardCodedServerCertificateHash = { 0xf1, 0x40, 0x8a, 0xd8, 0xb5, 0x1a, 0x42, 0xdb, 0x50, 0x44, 0x04, 0xa1, 0xa8, 0x92, 0xa8, 0xa8, 0x77, 0x41, 0x31, 0x2d };
-	// Use this for initialization
+	GameObject localPrefab;
+	GameObject remotePrefab;
 
+	string localUsername = "tsurba";
 
 	void Start () {
+
+        LoginRequestEvent levent = new LoginRequestEvent();
+        levent.username = localUsername;
+        levent.password = "test1";
+		WriteQueue.Write(levent);
+
+
+        localPrefab = Resources.Load<GameObject>("LocalPlayer");
+        remotePrefab = Resources.Load<GameObject>("RemotePlayer");
 		//NetworkLoop network = new NetworkLoop();
 		//Thread oThread = new Thread(new ThreadStart(network.RunNetworkLoop));
 		//oThread.Start();
@@ -31,51 +41,44 @@ public class NetworkManager : MonoBehaviour
         eventHandlers["info"] = infoHandler;
         eventHandlers["registerEvent"] = registerHandler;
         eventHandlers["remotePlayerJoinEvent"] = remotePlayerJoinHandler;
+        eventHandlers["quitEvent"] = quitHandler;
         
 
 	}
 	
-	// Update is called once per frame
-    
-    
 	void Update () {
         //Get from readqueue
-        var derp = ReadQueue.Read();
-        if (derp == null)
+        var read  = ReadQueue.Read();
+        if (read == null)
         {
 			return;
         }
-        Debug.Log(derp);
-		Dictionary<string, object> obj = fastJSON.JSON.Parse(derp) as Dictionary<string, object>;
-        foreach(KeyValuePair<string, object> kvp in obj)
-        {
-            Debug.Log("key: " + kvp.Key + " value: " + kvp.Value);
-        }
+		Dictionary<string, object> obj = fastJSON.JSON.Parse(read) as Dictionary<string, object>;
 
-        eventHandlers[obj["type"].ToString()](obj["properties"]);
-        
-        //eventHandlerDes handler = moveHandler;
-        
-		Debug.Log(obj["type"]);
-
-		//Debug.Log(obj);
-        //dicshunary[obj["type"]](dem, argumentit);
-		//JObject o = JObject.Parse(derp);
-		//Debug.Log(o.Property("eventType"));
-		//Debug.Log(schema.Properties["eventType"]);
-
-		//string  test = JsonConvert.DeserializeObject(derp) as eventType;
-
+		string json = fastJSON.JSON.ToJSON(obj["properties"]);
+		Debug.Log(obj["type"].ToString());
+		eventHandlers[obj["type"].ToString()](json);
 	}
-    public void moveHandler(object data)
-    {
-        Dictionary<string, object> move = fastJSON.JSON.Parse(data.ToString()) as Dictionary<string, object>;
-        Debug.Log("sinep" + move["user"]);
-        
-    }
 
-    public void loginHandler(object data)
+    public void quitHandler(string data)
+	{
+		data = data.Replace("\"", "");
+		Debug.Log("got quit " + data);
+		players[data].Destroy();
+		players[data] = null;
+		players.Remove(data);
+	}
+    public void moveHandler(string data)
     {
+		MoveEvent eventData = fastJSON.JSON.ToObject<MoveEvent>(data);
+
+        players[eventData.username].moveTo(eventData.to, eventData.from);
+	}
+
+    public void loginHandler(string data)
+    {
+		data = data.Replace("\"", "");
+        //fastJSON.JSON.ToObject<string>
         if (data.ToString() == "accepted")
         {
             JoinAreaRequestEvent r = new JoinAreaRequestEvent();
@@ -86,14 +89,41 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    public void joinAreaHandler(object data)
-    {
 
+    public void joinAreaHandler(string data)
+    {
+		JoinAreaEvent eventData = fastJSON.JSON.ToObject<JoinAreaEvent>(data);
+        int playerCount = eventData.playersData.Count;
+        for(int i = 0; i < playerCount; i++)
+        {
+            string playerName = eventData.playersData[i].username;
+
+			GameObject go = null;
+			if(playerName == localUsername)
+			{
+                go = GameObject.Instantiate(localPrefab) as GameObject;
+            }
+            else
+			{
+			    go = GameObject.Instantiate(remotePrefab) as GameObject;
+			}
+            Vector2JSON pos = eventData.playersData[i].position;
+			Vector2 position = new Vector2(pos.x, pos.y);
+
+			Player player = new Player(go, playerName, position);
+		    go.GetComponent<PlayerMonoBehaviour>().Initialize(player); //This is a bit ugly, but needed if we don't have a common Player base(=super) class for both local and remote players.
+			players[playerName] = player;
+        }
     }
+
+    private void createNewPlayer()
+	{
+
+	}
 
     public void infoHandler(object data)
     {
-
+        Debug.Log(data);
     }
 
     public void registerHandler(object data)
@@ -101,19 +131,25 @@ public class NetworkManager : MonoBehaviour
 
     }
 
-    public void remotePlayerJoinHandler(object data)
+    public void remotePlayerJoinHandler(string data)
     {
+        RemotePlayerData playerData = fastJSON.JSON.ToObject<RemotePlayerData>(data);
+		string playerName = playerData.username;
 
+        if(players.ContainsKey(playerName))
+		{
+			players[playerName].Destroy();
+			players[playerName] = null;
+			players.Remove(playerName);
+		}
+
+        GameObject go = GameObject.Instantiate(remotePrefab) as GameObject;
+		Vector2JSON pos = playerData.position;
+        Vector2 position = new Vector2(pos.x, pos.y);
+
+        Player player = new Player(go, playerName, position);
+        go.GetComponent<PlayerMonoBehaviour>().Initialize(player); //This is a bit ugly, but needed if we don't have a common Player base(=super) class for both local and remote players.
+        players[playerName] = player;
     }
-
-    class eventType 
-	{
-		string type = "";
-    }
-
-
-    
-	
-
 }
 

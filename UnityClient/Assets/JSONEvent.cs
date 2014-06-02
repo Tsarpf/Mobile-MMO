@@ -19,11 +19,26 @@ public abstract class JSONEvent
     }
 }
 
+
 public class JoinAreaRequestEvent : JSONEvent
 {
 	public string areaId;
 	public string password;
 }
+
+public class JoinAreaEvent : JSONEvent
+{
+	public Vector2JSON startingPosition;
+	public Vector2JSON dimensions;
+	public List<RemotePlayerData> playersData;
+}
+
+public class RemotePlayerData
+{
+	public string username;
+	public Vector2JSON position; 
+}
+
 public class RegisterRequestEvent : JSONEvent
 {
     //public static readonly string EventType = "Register";
@@ -45,7 +60,7 @@ public class MoveRequestEvent : JSONEvent
 
 public class MoveEvent : JSONEvent
 {
-    public string user;
+    public string username;
 	public Vector2JSON from;
 	public Vector2JSON[] to;
 }
@@ -55,14 +70,4 @@ public class Vector2JSON
 {
 	public float x;
 	public float y;
-    public Vector2JSON(Vector2 vector)
-	{
-		x = vector.x;
-		y = vector.y;
-	}
-    public Vector2JSON(float x, float y)
-	{
-		this.x = x;
-		this.y = y;
-	}
 }
