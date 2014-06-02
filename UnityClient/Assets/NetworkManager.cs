@@ -86,33 +86,6 @@ public class NetworkManager : MonoBehaviour
 		MoveEvent eventData = fastJSON.JSON.ToObject<MoveEvent>(data);
 
 		Debug.Log(eventData);
-
-        /*
-        Dictionary<string, object> movedata = data as Dictionary<string, object>;
-        Debug.Log("sinep" + movedata.ToString());
-        foreach(KeyValuePair<string, object> kvp in movedata)
-        {
-           Debug.Log("key: " + kvp.Key + " value: " + kvp.Value);
-        }
-        string username = movedata["user"].ToString();
-        Dictionary<string, object> from = movedata["from"] as Dictionary<string, object>;
-        Vector2 fromVector = new Vector2(int.Parse(from["x"].ToString()), int.Parse(from["y"].ToString()));
-        Debug.Log("from: " + fromVector.x);
-        List<object> to = movedata["to"] as List<object>;
-        List<Vector2> toVectors = new List<Vector2>();
-
-        foreach (var pair in to)
-        {
-            Dictionary<string, object> sinep = pair as Dictionary<string, object>;
-            toVectors.Add(new Vector2(int.Parse(sinep["x"].ToString()), int.Parse(sinep["y"].ToString())));
-        }
-
-		Debug.Log(toVectors[0]);
-
-        players[username].moveTo(toVectors[0]);
-        */
-
-
 	}
 
     public void loginHandler(string data)
@@ -122,7 +95,6 @@ public class NetworkManager : MonoBehaviour
 		Debug.Log("sup: " + data);
         if (data.ToString() == "accepted")
         {
-			Debug.Log("hei vain");
             JoinAreaRequestEvent r = new JoinAreaRequestEvent();
             r.areaId = "test";
             r.password = "";
