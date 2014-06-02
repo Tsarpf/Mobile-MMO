@@ -44,13 +44,16 @@ public class Player
         //ses
     }
 
+
     public void Destroy()
 	{
 		GameObject.Destroy(playerObj);
 	}
 
-    public void moveTo(Vector2JSON[] route)
+
+    public void moveTo(Vector2JSON[] route, Vector2JSON from)
     {
+        playerObj.transform.position = new Vector3(from.x, 0, from.y);
         this.route = new Queue<Vector2JSON>();
         foreach (var sinep in route)
         {

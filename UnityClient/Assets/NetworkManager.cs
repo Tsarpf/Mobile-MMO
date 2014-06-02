@@ -70,7 +70,7 @@ public class NetworkManager : MonoBehaviour
     {
 		MoveEvent eventData = fastJSON.JSON.ToObject<MoveEvent>(data);
 
-        players[eventData.username].moveTo(eventData.to);
+        players[eventData.username].moveTo(eventData.to, eventData.from);
 	}
 
     public void loginHandler(string data)
