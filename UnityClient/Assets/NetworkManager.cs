@@ -42,6 +42,7 @@ public class NetworkManager : MonoBehaviour
         eventHandlers["registerEvent"] = registerHandler;
         eventHandlers["remotePlayerJoinEvent"] = remotePlayerJoinHandler;
         eventHandlers["quitEvent"] = quitHandler;
+		eventHandlers["areaChatEvent"] = areaChatHandler;
         
 
 	}
@@ -58,6 +59,12 @@ public class NetworkManager : MonoBehaviour
 		string json = fastJSON.JSON.ToJSON(obj["properties"]);
 		Debug.Log(obj["type"].ToString());
 		eventHandlers[obj["type"].ToString()](json);
+	}
+
+    public void areaChatHandler(string data)
+	{
+		string eventData = fastJSON.JSON.ToObject<string>(data);
+		Debug.Log("got message:" + eventData);
 	}
 
     public void quitHandler(string data)
