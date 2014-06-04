@@ -31,17 +31,13 @@ var clearTextServer = function(cleartextStream) {
     }
     var postLoginHandlers = {
         "moveRequest": require('./moveHandler.js'),
-        "joinAreaRequest": require('./joinAreaHandler.js')
+        "joinAreaRequest": require('./joinAreaHandler.js'),
+        "areaChatRequest": require('./chatHandlers.js')["areaChat"]
     }
     var serverHandlers = {};
     serverHandlers["registerRequest"] = require('./authHandlers.js')["register"];
     serverHandlers["loginRequest"] = loginClosure(serverHandlers, postLoginHandlers, cleartextStream);
 
-    /*
-    cleartextStream.on("end", function() {
-        clearTextServer.close();
-    });
-    */
     
     var currentUser = {};
     cleartextStream.on("error", function(err){
@@ -59,6 +55,9 @@ var clearTextServer = function(cleartextStream) {
             console.log(error);
             return;
         }
+
+        console.log("received: ");
+        console.log(receivedData);
 
         var eventType = receivedData["eventType"];
         if(eventType in serverHandlers)
