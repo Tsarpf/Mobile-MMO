@@ -2,19 +2,14 @@
 using System.Collections;
 using Newtonsoft.Json;
 
-public class PlayerMove : MonoBehaviour {
-
+public class LocalPlayerMonoBehaviour : MonoBehaviour 
+{
 	Vector3 position;
 	Vector3 target;
 	Cell lastTouched;
-	/*
-    public void MoveTo(Vector3 target)
-	{
-		this.target = target; 
-	}
-	*/
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
 		position = transform.position;
 		target = position;
 
@@ -94,18 +89,36 @@ public class PlayerMove : MonoBehaviour {
             
         }
 
+
+
     }
 		   
 
-        bool V3Equal(Vector3 a, Vector3 b)
-        {
-            a = new Vector3(a.x, 0, a.z);
-            b = new Vector3(b.x, 0, b.z);
-            return Vector3.SqrMagnitude(a - b) < 0.001;
-        }
+    bool V3Equal(Vector3 a, Vector3 b)
+    {
+        a = new Vector3(a.x, 0, a.z);
+        b = new Vector3(b.x, 0, b.z);
+        return Vector3.SqrMagnitude(a - b) < 0.001;
+    }
 
-		
+	private string chatString = "Oh hi";
+    void OnGUI()
+	{
+		Event e = Event.current;
+        if (e.keyCode == KeyCode.Return && Event.current.type == EventType.keyDown)
+		{
+			if (chatString.Trim() != "")
+			{
+				AreaChatRequestEvent r = new AreaChatRequestEvent
+                {
+                    message = chatString.Trim()
+                };
+				WriteQueue.Write(r);
 
+				chatString = "";
+			}
+		}
+		chatString = GUI.TextField(new Rect(10, Screen.height - 30, 200, 20), chatString, 25);
 	}
-
+}
     

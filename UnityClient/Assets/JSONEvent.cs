@@ -33,12 +33,17 @@ public class JoinAreaEvent : JSONEvent
 	public List<RemotePlayerData> playersData;
 }
 
+
 public class RemotePlayerData
 {
 	public string username;
 	public Vector2JSON position; 
 }
 
+public class AreaChatRequestEvent : JSONEvent
+{
+	public string message;
+}
 public class RegisterRequestEvent : JSONEvent
 {
     //public static readonly string EventType = "Register";
