@@ -23,12 +23,31 @@ public class SpeechBubble : MonoBehaviour
 	//a guiSkin, to render the round part of the speech balloon
 	public GUISkin guiSkin;
 
-	public string message;
+	private string message;
+    public void ShowMessageBubble(string message)
+	{
+		this.message = message;
+		mat.color = Color.red;
+		StartCoroutine("BubbleFade", 0.02f);
+
+	}
+
+    IEnumerator BubbleFade(float alphaDecreasePerFrame)
+	{
+		while (mat.color.a > 0)
+		{
+			//Debug.Log(mat.color);
+			Color color = mat.color;
+			color.a -= alphaDecreasePerFrame;
+			mat.color = color;
+			yield return null;
+		}
+	}
+
 	void Awake()
 	{
 		goTransform = this.GetComponent<Transform>();
-
-        //set triangle color to white, but make it transparent
+		mat.color = Color.red;
 	}
 
 	void Start()
@@ -47,6 +66,8 @@ public class SpeechBubble : MonoBehaviour
 
 		centerOffsetX = bubbleWidth / 2;
 		centerOffsetY = bubbleHeight / 2;
+
+		Debug.Log("passcount: " + mat.passCount);
 	}
 
 	void LateUpdate()
@@ -70,21 +91,26 @@ public class SpeechBubble : MonoBehaviour
 	//Called after camera has finished rendering the scene
 	void OnRenderObject()
 	{
-		//push current matrix into the matrix stack
 		GL.PushMatrix();
-		//set material pass
-		mat.SetPass(0);
-		//load orthogonal projection matrix (ie. disable 3d)
 		GL.LoadOrtho();
-		//a triangle primitive is going to be rendered
-		GL.Begin(GL.TRIANGLES);
 
-		//Define the triangle vetices
-		GL.Vertex3(goViewportPos.x, goViewportPos.y + (offsetY / 3) / Screen.height, 0.1f);
-		GL.Vertex3(goViewportPos.x - (bubbleWidth / 3) / (float)Screen.width, goViewportPos.y + offsetY / Screen.height, 0.1f);
-		GL.Vertex3(goViewportPos.x - (bubbleWidth / 8) / (float)Screen.width, goViewportPos.y + offsetY / Screen.height, 0.1f);
+		//for (int i = 0; i < mat.passCount; i++)
+		//for (int i = 0; i < 1; i++)
+		//{
+			mat.SetPass(0);
+			//mat.SetPass(i);
+			GL.Begin(GL.TRIANGLES);
+            GL.Color(mat.color);
+			Debug.Log(mat.color);
 
-		GL.End();
+
+			//Define the triangle vetices
+			GL.Vertex3(goViewportPos.x, goViewportPos.y + (offsetY / 3) / Screen.height, 0.1f);
+			GL.Vertex3(goViewportPos.x - (bubbleWidth / 3) / (float)Screen.width, goViewportPos.y + offsetY / Screen.height, 0.1f);
+			GL.Vertex3(goViewportPos.x - (bubbleWidth / 8) / (float)Screen.width, goViewportPos.y + offsetY / Screen.height, 0.1f);
+
+			GL.End();
+		//}
 		//pop the orthogonal matrix from the stack
 		GL.PopMatrix();
 	}
