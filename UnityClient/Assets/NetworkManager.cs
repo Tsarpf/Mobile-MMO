@@ -19,6 +19,7 @@ public class NetworkManager : MonoBehaviour
 	GameObject localPrefab;
 	GameObject remotePrefab;
 
+
 	string localUsername = "tsurba";
 
 	void Start () {
@@ -28,9 +29,10 @@ public class NetworkManager : MonoBehaviour
         levent.password = "test1";
 		WriteQueue.Write(levent);
 
+        
 
-        localPrefab = Resources.Load<GameObject>("LocalPlayer");
-        remotePrefab = Resources.Load<GameObject>("RemotePlayer");
+        localPrefab = Resources.Load<GameObject>("Prefabs/LocalPlayer");
+        remotePrefab = Resources.Load<GameObject>("Prefabs/RemotePlayer");
 		//NetworkLoop network = new NetworkLoop();
 		//Thread oThread = new Thread(new ThreadStart(network.RunNetworkLoop));
 		//oThread.Start();
@@ -63,8 +65,10 @@ public class NetworkManager : MonoBehaviour
 
     public void areaChatHandler(string data)
 	{
-		string eventData = fastJSON.JSON.ToObject<string>(data);
-		Debug.Log("got message:" + eventData);
+		AreaChatEvent eventData = fastJSON.JSON.ToObject<AreaChatEvent>(data);
+		//Debug.Log("got message:" + eventData);
+		Player player = players[eventData.username];
+		player.ShowBubbleMessage(eventData.message);
 	}
 
     public void quitHandler(string data)

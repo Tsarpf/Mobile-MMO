@@ -44,6 +44,12 @@ public class AreaChatRequestEvent : JSONEvent
 {
 	public string message;
 }
+
+public class AreaChatEvent : JSONEvent
+{
+	public string username;
+	public string message;
+}
 public class RegisterRequestEvent : JSONEvent
 {
     //public static readonly string EventType = "Register";

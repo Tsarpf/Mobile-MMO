@@ -10,6 +10,7 @@ public class Player
     GameObject playerObj;
     Vector2 targetPosition;
     Queue<Vector2JSON> route;
+	SpeechBubble bubble;
     string username;
     //PlayerMonoBehaviour 
     public Player(GameObject prefab, string username, Vector2 position)
@@ -43,6 +44,7 @@ public class Player
     public void Start()
     {
         //ses
+		bubble = playerObj.GetComponent<SpeechBubble>();
     }
 
 
@@ -64,6 +66,10 @@ public class Player
 
     }
 
+    public void ShowBubbleMessage(string message)
+	{
+		bubble.message = message;
+	}
     void move(Vector2JSON nexttarget)
     {
         targetPosition = new Vector2(nexttarget.x, nexttarget.y);
