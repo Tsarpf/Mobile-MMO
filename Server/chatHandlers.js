@@ -8,7 +8,11 @@ var areaChatHandler = function(eventData, callback) {
     }
 
 
-    var message = eventData.message;
+    var message = {
+        username: user.getName(),
+        message: eventData.message
+    }
+
     area.sendAll(resObject("areaChatEvent", message));
 }
 
