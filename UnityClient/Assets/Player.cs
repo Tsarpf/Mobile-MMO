@@ -69,6 +69,7 @@ public class Player
     public void ShowBubbleMessage(string message)
 	{
 		bubble.message = message;
+		//bubble.triangleColor = Color.white;
 	}
     void move(Vector2JSON nexttarget)
     {

@@ -101,11 +101,32 @@ public class LocalPlayerMonoBehaviour : MonoBehaviour
         return Vector3.SqrMagnitude(a - b) < 0.001;
     }
 
-	private string chatString = "Oh hi";
+	private string chatString = "Click here or press Enter to focus here. After typing press enter to chat to others in the area";
+	private bool typing = false;
     void OnGUI()
 	{
+        //Remember the event stuff (next 3 lines) must be handled before drawing text fields etc. otherwise they'll eat up the events
 		Event e = Event.current;
-        if (e.keyCode == KeyCode.Return && Event.current.type == EventType.keyDown)
+		typing = GUI.GetNameOfFocusedControl() == "chat";
+		bool hitEnterThisFrame = e.keyCode == KeyCode.Return && Event.current.type == EventType.keyDown;
+
+
+
+
+		GUI.SetNextControlName("chat");
+		chatString = GUI.TextField(new Rect(10, Screen.height - 40, 500, 30), chatString, 100);
+
+
+
+        if(!typing && hitEnterThisFrame)
+		{
+			//Debug.Log("perkele");
+			GUI.FocusControl("chat");
+			typing = true;
+			return;
+		}
+		//if (e.keyCode == KeyCode.Return && Event.current.type == EventType.keyDown && GUI.GetNameOfFocusedControl() == "chat")
+        if(typing && hitEnterThisFrame)
 		{
 			if (chatString.Trim() != "")
 			{
@@ -118,7 +139,6 @@ public class LocalPlayerMonoBehaviour : MonoBehaviour
 				chatString = "";
 			}
 		}
-		chatString = GUI.TextField(new Rect(10, Screen.height - 30, 200, 20), chatString, 25);
 	}
 }
     
