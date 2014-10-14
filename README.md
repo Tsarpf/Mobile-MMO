@@ -3,6 +3,15 @@ Project RahatPois
 
 In finland we call it a rahasampo
 
+####Finished features
+#####All the following is implemented in at least some way in both backend and the client using connections that go through secure SSL/TLS sockets:
+- New user registration
+- Logging in/out
+- Separation of users to rooms/areas/whatever
+- Room join events etc.
+- Room-wide chatting between users in the same room
+- Room-wide moving around within the room's area/grid
+
 
 ### In short: 3D clone of a finnish well-known chatting "game". Targeting mobile.
 
